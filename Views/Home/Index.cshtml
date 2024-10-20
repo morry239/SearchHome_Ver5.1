@@ -1,0 +1,16 @@
+﻿@model IEnumerable<WebApplication1.Models.PortalUsers>
+@{
+    ViewData["Title"] = "Home Page";
+    var user = Model.LastOrDefault();
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+           
+           <h2>test index: @user.Name</h2>
+           <p>Age: @(user.Age != null ? user.Age.ToString() : "Not Provided")</p>
+           <p>Location: @(string.IsNullOrEmpty(user.Location) ? "Not Provided" : user.Location)</p>
+
+       
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>

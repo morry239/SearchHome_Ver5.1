@@ -1,0 +1,40 @@
+@model IEnumerable<WebApplication1.Models.ListingProjects>
+
+@{
+  ViewData["Title"] = "Dashboard";
+  var listingMd = Model?.FirstOrDefault();
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>TestDashboard1</title>
+    <style>
+        .listing { margin-bottom: 20px; padding: 10px; }
+        .listing img { width: 100px; height: auto; }
+        .testcontainer_2 { border: 2px solid black; box-shadow: 0 0 2px gray; width: 50%;}
+    </style>
+</head>
+<body>
+<div class="testcontainer_2">
+    <div class="picture_placeholder_2"><img src="fas fa-camera"/></div>
+    <div class="beschriftung_whg1">
+        @if (listingMd != null)
+        {
+            <p>listing is not null</p>
+            <h2>Test index: @(listingMd.ListingName ?? "null null")</h2>
+            <!-- Use null-coalescing operator for ListingName -->
+            <p>Age: @(listingMd.Id != null ? listingMd.Id.ToString() : "Not Provided")</p>
+            <p>Location: @(listingMd.CategoryId != null ? listingMd.CategoryId.ToString() : "Not Provided")</p>
+        }
+        else
+        {
+            <p>No listings available.</p>
+            <!-- Fallback content if Model is empty -->
+        }
+    </div>
+</div>
+
+<script src="js/site.js"></script>
+</body>
+</html>

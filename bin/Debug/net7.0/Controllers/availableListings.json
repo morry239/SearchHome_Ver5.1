@@ -1,0 +1,40 @@
+{
+  "properties": [
+    {
+      "property_name": "St Johannes 3",
+      "property_type": "2er WG",
+      "rent_price_monthly": 600,
+      "ad_published_date": "2024-09-15"
+    },
+    {
+      "property_name": "St Sebald A",
+      "property_type": "1-Zimmer-Wohnung",
+      "rent_price_monthly": 1000,
+      "ad_published_date": "2024-09-15"
+    },
+    {
+      "property_name": "Hauptbahnhof B ",
+      "property_type": "Shared dorm room",
+      "rent_price_monthly": 325,
+      "ad_published_date": "2024-09-15"
+    },
+    {
+      "property_name": "Sunset Apartments",
+      "property_type": "Apartment",
+      "rent_price_monthly": 1200,
+      "ad_published_date": "2024-09-15"
+    },
+    {
+      "property_name": "Downtown Loft",
+      "property_type": "Loft",
+      "rent_price_monthly": 2500,
+      "ad_published_date": "2024-08-22"
+    },
+    {
+      "property_name": "Greenfield Villa",
+      "property_type": "House",
+      "rent_price_monthly": 3500,
+      "ad_published_date": "2024-09-10"
+    }
+  ]
+}

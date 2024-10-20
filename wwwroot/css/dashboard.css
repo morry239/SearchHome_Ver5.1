@@ -1,0 +1,17 @@
+.fullWidth {
+    width: 100%
+}
+
+.flex-d-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-d-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.chart-container {
+    flex: 1;
+}
