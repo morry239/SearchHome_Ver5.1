@@ -17,11 +17,20 @@ public class APIController : Controller
         }
 
         [HttpGet("availableListings")]
-        public async Task<IEnumerable<ListingProjects>> Get()
+        public async Task<List<ListingProjectsDTO>> GetListings()
         {
-            return await _context.ListingDBTable.ToListAsync();
-        }
+            
+            var listings = from b in _context.ListingDTO_DBTable
+                select new ListingProjectsDTO()
+                {
+                    ListingId = b.ListingId,
+                    ListingName_DTO = b.ListingName_DTO
+                };
 
+            return listings.ToList();
+            
+        }
+        [ProducesResponseType(typeof(List<ListingProjectsDTO>), 200)]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -33,15 +42,30 @@ public class APIController : Controller
             return Ok(product);
 
         }
-
+        
+        [ProducesResponseType(typeof(List<ListingProjectsDTO>), 200)]
         [HttpPost]
         public async Task<IActionResult> Post(ListingProjects listing)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            
             _context.Add(listing);
             await _context.SaveChangesAsync();
-            return Ok();
-        }
+            _context.Entry(listing).Reference(x => x.ListingName).Load();
 
+            var dto = new ListingProjectsDTO()
+            {
+                ListingId = listing.Id,
+                ListingName_DTO = listing.ListingName
+
+            };
+            
+            return CreatedAtRoute("DefaultApi", new { id = listing.Id }, dto);
+        }
+        
         [HttpPut]
         public async Task<IActionResult> Put(ListingProjects listingData)
         {

@@ -1,0 +1,48 @@
+@model List<ListingProjectsDTO>
+
+@{
+    ViewData["Title"] = "Insert Listings";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+
+@Html.AntiForgeryToken()
+@using (Html.BeginForm("InsertListings", "Home", FormMethod.Post))
+{
+    // Loop through each ListingProjectsDTO in the Model (which is List<ListingProjectsDTO>)
+    foreach (var listingMd in Model)
+    {
+        // Create a new table for each item
+        <table id="tblCust" class="table table-bordered">
+            <thead>
+            <tr>
+                <td>@Html.Label("ListingName_DTO", "Listing Name", new { @class = "control-label" })</td>
+            </tr>
+            <tr>
+                <td>@Html.TextBox($"Listings[{Model.IndexOf(listingMd)}].ListingName_DTO", listingMd.ListingName_DTO, new { @class = "form-control" })</td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" 
+                           style="float:right;" 
+                           data-entity-id="@listingMd.ListingId" 
+                           id="saveBtn" 
+                           class="btn btn-info" 
+                           value="Save" />
+                </td>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    }
+}
+
+</body>
+</html>
+

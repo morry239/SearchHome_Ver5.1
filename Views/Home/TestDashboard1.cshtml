@@ -1,40 +1,115 @@
-@model IEnumerable<WebApplication1.Models.ListingProjects>
-
+@model List<ListingProjectsDTO>
 @{
   ViewData["Title"] = "Dashboard";
-  var listingMd = Model?.FirstOrDefault();
+  //var listingMd = Model?.FirstOrDefault();
 }
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta name="viewport" content="width=device-width"/>
     <title>TestDashboard1</title>
     <style>
-        .listing { margin-bottom: 20px; padding: 10px; }
-        .listing img { width: 100px; height: auto; }
-        .testcontainer_2 { border: 2px solid black; box-shadow: 0 0 2px gray; width: 50%;}
+        .listing {
+            margin: 10px;
+            padding: 10px;
+            width: 45%; /* Make each listing take up roughly half the container */
+            border: 1.5px outset darkgray;
+            box-shadow: 0 0 2px #aca9a9;
+            border-radius: 6px;
+        }
+        .wrapper {
+            display: flex;
+            flex-wrap: wrap; /* Allows listings to wrap to the next line if necessary */
+            gap: 10px; /* Adds spacing between listing items */
+        }
+        .listing img {
+            width: 100%;
+            height: auto;
+        }
+        .roundPlaceholder {
+            width: 60px;
+            height: 20px;
+            background: #a84909;
+            border-radius: 10px;
+        }
+        .roundPlaceholderTxt {
+            font-size: 10px;
+            font-family: Arial;
+            text-align: center;
+            color: aliceblue;
+        }
+        .listingPhoto {
+            text-align: center;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
-<div class="testcontainer_2">
-    <div class="picture_placeholder_2"><img src="fas fa-camera"/></div>
-    <div class="beschriftung_whg1">
+<div class="wrapper">
+    @foreach (var listingMd in Model)
+    {
         @if (listingMd != null)
         {
-            <p>listing is not null</p>
-            <h2>Test index: @(listingMd.ListingName ?? "null null")</h2>
-            <!-- Use null-coalescing operator for ListingName -->
-            <p>Age: @(listingMd.Id != null ? listingMd.Id.ToString() : "Not Provided")</p>
-            <p>Location: @(listingMd.CategoryId != null ? listingMd.CategoryId.ToString() : "Not Provided")</p>
+            <div class="listing" method="post" action="@Url.Action("Update","Staff")">
+                <p>Listing is not null</p>
+                <div><img class="listingPhoto" src="~/imgSearchHome/IMG_20220102_161928.jpg" /></div>
+                <input type="hidden" name="Id" value="@Model." />
+                <div>
+                    <p>Test index: @(listingMd.ListingName_DTO ?? "null null")</p>
+                    <p>Age: @(listingMd.ListingId != null ? listingMd.ListingId.ToString() : "Not Provided")</p>
+                    <div class="roundPlaceholder">
+                        <p class="roundPlaceholderTxt">Book me</p>
+                    </div>
+                    <div class="deleteListingBtn">
+                        <a type="button" class="delete" data-entity-id="@listingMd.ListingId" class="btn btn-danger">Delete</a>
+                    </div>
+                    <div class="editListingBtn">
+                        <a type="button" class="edit" href="@Url.Action("Edit","Home",new {id=listingMd.ListingId})" class="btn btn-danger">EditAction</a>
+                        @Html.ActionLink("Edit", "Edit", new {id=listingMd.ListingId })
+                    </div>
+            
+                    <p>Location: @(listingMd.ListingId!= null ? listingMd.ListingId.ToString() : "Not Provided")</p>
+                </div>
+            </div>
         }
         else
         {
             <p>No listings available.</p>
-            <!-- Fallback content if Model is empty -->
         }
-    </div>
+    }
 </div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".delete").click(function (e) {
+            e.preventDefault(); // Prevent default action
 
-<script src="js/site.js"></script>
+            var button = $(this); // Reference the clicked button
+            var id = button.data("entity-id"); // Get the ID from data-entity-id attribute
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("DeleteDetails", "Home")", // Correct action for deletion
+                data: {
+                    id: id,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() // Anti-forgery token
+                },
+                dataType: "json", // Expect JSON response
+                success: function (data, status, xhr) {
+                    if (data === "success!") {
+                        button.closest(".listing").hide("slow"); // Hide card on success
+                    } else {
+                        alert("Error: " + data); // Display error message
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error: " + status + " " + error + " " + xhr.status + " " + xhr.statusText);
+                }
+            });
+        });
+    });
+</script>
+
+
 </body>
 </html>

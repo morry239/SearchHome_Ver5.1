@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<WebApplication1.Models.PortalUsers>
 @{
     ViewData["Title"] = "Home Page";
-    var user = Model.LastOrDefault();
+    var user = Model?.LastOrDefault();
 }
 
 <div class="text-center">

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication1.Data;
 
@@ -10,9 +11,11 @@ using WebApplication1.Data;
 namespace WebApplication1.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241026234733_hiddenMoonExperiment")]
+    partial class hiddenMoonExperiment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -197,25 +200,6 @@ namespace WebApplication1.Data.Migrations
                     b.ToTable("ListingDBTable");
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.ListingProjectsDTO", b =>
-                {
-                    b.Property<int?>("ListingId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("ListingName_DTO")
-                        .HasColumnType("longtext");
-
-                    b.Property<int?>("ListingProjectsFKId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ListingId");
-
-                    b.HasIndex("ListingProjectsFKId");
-
-                    b.ToTable("ListingDTO_DBTable");
-                });
-
             modelBuilder.Entity("WebApplication1.Models.Location", b =>
                 {
                     b.Property<int>("Id")
@@ -376,15 +360,6 @@ namespace WebApplication1.Data.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Location");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.ListingProjectsDTO", b =>
-                {
-                    b.HasOne("WebApplication1.Models.ListingProjects", "ListingProjectsFK")
-                        .WithMany()
-                        .HasForeignKey("ListingProjectsFKId");
-
-                    b.Navigation("ListingProjectsFK");
                 });
 #pragma warning restore 612, 618
         }

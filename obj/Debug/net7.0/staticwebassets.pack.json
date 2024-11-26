@@ -17,6 +17,10 @@
       "PackagePath": "staticwebassets/favicon.ico"
     },
     {
+      "Id": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/imgSearchHome/IMG_20220102_161928.jpg",
+      "PackagePath": "staticwebassets/imgSearchHome/IMG_20220102_161928.jpg"
+    },
+    {
       "Id": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/js/fetcher.js",
       "PackagePath": "staticwebassets/js/fetcher.js"
     },

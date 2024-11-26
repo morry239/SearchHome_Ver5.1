@@ -18,6 +18,6 @@ public class ApplicationDbContext : IdentityDbContext<PortalUsers>
     public Microsoft.EntityFrameworkCore.DbSet<Category> CategoriesDBTable { get; set; }
     public Microsoft.EntityFrameworkCore.DbSet<ListingProjects> ListingDBTable { get; set; }
     public Microsoft.EntityFrameworkCore.DbSet<Location> LocationDBTable { get; set; }
-    
+    public Microsoft.EntityFrameworkCore.DbSet<ListingProjectsDTO> ListingDTO_DBTable { get; set; }
     
 }

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "9T1ux9tRF6U8I3mIpHnx2cp46dFrI35rZCeCC7oTMRI=",
+  "Hash": "tus7jHrne8PJHkMNJkhvK7hXe9F2fK3O8NceIMMzIA8=",
   "Source": "SearchHome",
   "BasePath": "_content/SearchHome",
   "Mode": "Default",
@@ -1120,6 +1120,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/favicon.ico"
+    },
+    {
+      "Identity": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/imgSearchHome/IMG_20220102_161928.jpg",
+      "SourceId": "SearchHome",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/",
+      "BasePath": "_content/SearchHome",
+      "RelativePath": "imgSearchHome/IMG_20220102_161928.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/imgSearchHome/IMG_20220102_161928.jpg"
     },
     {
       "Identity": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/js/fetcher.js",

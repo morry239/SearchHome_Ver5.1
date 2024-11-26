@@ -1,0 +1,58 @@
+@model ListingProjectsDTO
+@{
+    ViewData["Title"] = "Edit Dashboard";
+    
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta name="viewport" content="width=device-width"/>
+    <title>TestDashboard1</title>
+    <style>
+        .listing {
+            margin: 10px;
+            padding: 10px;
+            width: 45%; /* Make each listing take up roughly half the container */
+            border: 1.5px outset darkgray;
+            box-shadow: 0 0 2px #aca9a9;
+            border-radius: 6px;
+        }
+        .wrapper {
+            display: flex;
+            flex-wrap: wrap; /* Allows listings to wrap to the next line if necessary */
+            gap: 10px; /* Adds spacing between listing items */
+        }
+        .listing img {
+            width: 100%;
+            height: auto;
+        }
+        .roundPlaceholder {
+            width: 60px;
+            height: 20px;
+            background: #a84909;
+            border-radius: 10px;
+        }
+        .roundPlaceholderTxt {
+            font-size: 10px;
+            font-family: Arial;
+            text-align: center;
+            color: aliceblue;
+        }
+        .listingPhoto {
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="listing" method="post" action="@Url.Action("Update", "Home")">
+        <input type="hidden" name="Id" value="@Model.ListingProjectsFKId" />
+        <p>Listing Name: @Model.ListingName_DTO</p>
+        <p>Age: @(Model.ListingId != null ? Model.ListingId.ToString() : "Not Provided")</p>
+    </div>
+</div>
+
+</body>
+</html>
