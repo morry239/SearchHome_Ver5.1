@@ -1,34 +1,25 @@
 using System.Collections;
-using Microsoft.Build.Framework;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebApplication1.Models;
 
-public class ListingProjects : IEnumerable
+public class ListingProjects
 {
-    //public string? inputsToDB { get; set; }
+    [Key] // Explicitly define the primary key
     public int? Id { get; set; }
-    
-    [Required]
+
+    [Microsoft.Build.Framework.Required]
     public string? ListingName { get; set; }
-    [Required]
+
+    [Microsoft.Build.Framework.Required]
     public string? ImageUrl { get; set; }
-    
-    //Navigation properties to child model classes
-    [Required]
+
+    // Navigation properties to child model classes
+    [Microsoft.Build.Framework.Required]
     public int? CategoryId { get; set; }
     public Category? Category { get; set; }
-    
-    [Required]
+
+    [Microsoft.Build.Framework.Required]
     public int? LocationId { get; set; }
     public Location? Location { get; set; }
-    // Implement IEnumerable correctly
-    public IEnumerator<ListingProjects> GetEnumerator()
-    {
-        yield return this;
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
 }

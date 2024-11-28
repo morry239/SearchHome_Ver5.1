@@ -51,13 +51,13 @@
     {
         @if (listingMd != null)
         {
-            <div class="listing" method="post" action="@Url.Action("Update","Staff")">
-                <p>Listing is not null</p>
+            <div class="listing" data-id="@listingMd.ListingId">
                 <div><img class="listingPhoto" src="~/imgSearchHome/IMG_20220102_161928.jpg" /></div>
-                <input type="hidden" name="Id" value="@Model." />
-                <div>
-                    <p>Test index: @(listingMd.ListingName_DTO ?? "null null")</p>
-                    <p>Age: @(listingMd.ListingId != null ? listingMd.ListingId.ToString() : "Not Provided")</p>
+                <div class="content">
+                    <p>Test index: <span class="view-mode listing-name">@listingMd.ListingName_DTO</span>
+                        <input type="text" class="edit-mode form-control listing-name-input" value="@listingMd.ListingName_DTO" style="display: none;" />
+                    </p>
+                    <p>Age: <span class="view-mode listing-age">@listingMd.ListingId</span></p>
                     <div class="roundPlaceholder">
                         <p class="roundPlaceholderTxt">Book me</p>
                     </div>
@@ -65,11 +65,10 @@
                         <a type="button" class="delete" data-entity-id="@listingMd.ListingId" class="btn btn-danger">Delete</a>
                     </div>
                     <div class="editListingBtn">
-                        <a type="button" class="edit" href="@Url.Action("Edit","Home",new {id=listingMd.ListingId})" class="btn btn-danger">EditAction</a>
-                        @Html.ActionLink("Edit", "Edit", new {id=listingMd.ListingId })
+                        <button type="button" class="btn btn-warning edit-btn view-mode">Edit</button>
+                        <button type="button" class="btn btn-success save-btn edit-mode" style="display: none;">Save</button>
+                        <button type="button" class="btn btn-secondary cancel-btn edit-mode" style="display: none;">Cancel</button>
                     </div>
-            
-                    <p>Location: @(listingMd.ListingId!= null ? listingMd.ListingId.ToString() : "Not Provided")</p>
                 </div>
             </div>
         }
@@ -79,8 +78,52 @@
         }
     }
 </div>
+
 <script type="text/javascript">
     $(document).ready(function () {
+        $(".edit-btn").click(function () {
+            // Show edit mode
+            var parent = $(this).closest(".listing");
+            parent.find(".view-mode").hide();
+            parent.find(".edit-mode").show();
+        });
+
+        $(".cancel-btn").click(function () {
+            // Cancel editing and revert to view mode
+            var parent = $(this).closest(".listing");
+            parent.find(".edit-mode").hide();
+            parent.find(".view-mode").show();
+        });
+
+        $(".save-btn").click(function () {
+            // Save changes via AJAX
+            var parent = $(this).closest(".listing");
+            var id = parent.data("id");
+            var newName = parent.find(".listing-name-input").val();
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("Update", "Home")",
+                data: {
+                    ListingId: id,
+                    ListingName_DTO: newName,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() // Anti-forgery token
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // Update view mode content
+                        parent.find(".listing-name").text(newName);
+                        parent.find(".edit-mode").hide();
+                        parent.find(".view-mode").show();
+                    } else {
+                        alert("Error saving changes: " + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("Error: " + error);
+                }
+            });
+        });
         $(".delete").click(function (e) {
             e.preventDefault(); // Prevent default action
 
@@ -109,7 +152,6 @@
         });
     });
 </script>
-
 
 </body>
 </html>

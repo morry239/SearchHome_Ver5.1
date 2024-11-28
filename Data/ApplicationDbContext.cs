@@ -20,4 +20,15 @@ public class ApplicationDbContext : IdentityDbContext<PortalUsers>
     public Microsoft.EntityFrameworkCore.DbSet<Location> LocationDBTable { get; set; }
     public Microsoft.EntityFrameworkCore.DbSet<ListingProjectsDTO> ListingDTO_DBTable { get; set; }
     
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<ListingProjectsDTO>()
+            .HasOne(dto => dto.ListingProjectsFK)
+            .WithMany() // Assuming no reverse navigation from ListingProjects
+            .HasForeignKey(dto => dto.ListingProjectsFKId);
+    }
+
+    
 }
