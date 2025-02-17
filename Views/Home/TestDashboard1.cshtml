@@ -1,157 +1,194 @@
-@model List<ListingProjectsDTO>
+@model IEnumerable<ListingProjectsDTO>
+
 @{
   ViewData["Title"] = "Dashboard";
-  //var listingMd = Model?.FirstOrDefault();
+  
+  var listingMd = Model?.FirstOrDefault();
 }
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
     <meta name="viewport" content="width=device-width"/>
     <title>TestDashboard1</title>
-    <style>
-        .listing {
-            margin: 10px;
-            padding: 10px;
-            width: 45%; /* Make each listing take up roughly half the container */
-            border: 1.5px outset darkgray;
-            box-shadow: 0 0 2px #aca9a9;
-            border-radius: 6px;
-        }
-        .wrapper {
-            display: flex;
-            flex-wrap: wrap; /* Allows listings to wrap to the next line if necessary */
-            gap: 10px; /* Adds spacing between listing items */
-        }
-        .listing img {
-            width: 100%;
-            height: auto;
-        }
-        .roundPlaceholder {
-            width: 60px;
-            height: 20px;
-            background: #a84909;
-            border-radius: 10px;
-        }
-        .roundPlaceholderTxt {
-            font-size: 10px;
-            font-family: Arial;
-            text-align: center;
-            color: aliceblue;
-        }
-        .listingPhoto {
-            text-align: center;
-            width: 100%;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="~/css/dashboardAsOf1712_24.css" />
 </head>
 <body>
-<div class="wrapper">
-    @foreach (var listingMd in Model)
-    {
-        @if (listingMd != null)
-        {
-            <div class="listing" data-id="@listingMd.ListingId">
+<p>
+    <input type="button" id="btnCreateUser" value="Create User Button!"  class="btn btn-default" />
+</p>
+
+<div id="CreateUser" class="form-horizontal">
+    <h4>Users</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        <label class = "control-label col-md-2">Name</label>
+        <div class="col-md-10">
+            <input class="form-control" type="text" name="Name" id="Name"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2">Address</label>
+        <div class="col-md-10">
+            <input class="form-control" type="text" name="Address" id="Address" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2">Phone Number</label>
+        <div class="col-md-10">
+            <input class="form-control" type="text" name="PhoneNumber" id="PhoneNumber" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="button" id="btnCreate"value="Create" class="btn btn-default" />
+            <input type="button" id="btnJson" value="Create Json"  class="btn btn-default" />
+        </div>
+    </div>
+</div>
+
+<div id="EditDashboardNow" method="post" name="editSubmitId">
+    <form method="post" asp-controller="Home" asp-action="EditListingJpost" enctype="multipart/form-data">
+        <div class="listing form-horizontal">
+           
+            <div class="content">
                 <div><img class="listingPhoto" src="~/imgSearchHome/IMG_20220102_161928.jpg" /></div>
                 <div class="content">
-                    <p>Test index: <span class="view-mode listing-name">@listingMd.ListingName_DTO</span>
-                        <input type="text" class="edit-mode form-control listing-name-input" value="@listingMd.ListingName_DTO" style="display: none;" />
+                    <!-- Hidden input for Id -->
+                    <input type="hidden" value="@listingMd.Id" id="EditIdButHidden" name="Id" />
+                    <input type="hidden" value="@listingMd.ListingName" id="editPropertyName" name="ListingName" />
+
+                    <p>Property Name:
+                    <div class="form-group">
+                        <input class="form-control" id="editPropertyName" name="ListingName" value="@listingMd.ListingName"/>
+                        
+                    </div>
                     </p>
-                    <p>Age: <span class="view-mode listing-age">@listingMd.ListingId</span></p>
+                    <picture>I am the EditDashboard now</picture>
+                <p>Age: </p>
+                <div class="roundPlaceholder">
+                    <p class="roundPlaceholderTxt">Book me once you edit</p>
+                </div>
+                <div class="deleteListingBtn">
+                    <button type="button" class="delete" id="Delete" class="btn btn-danger">Delete</button>
+                </div>
+                <div>
+                    <button type="button" id="btnSaveEdit" value="@listingMd.Id" onclick="EditListingJpost(@listingMd.Id, @listingMd.ListingName)">Save</button>
+                    <button type="button" class="btn btn-secondary cancel-btn edit-mode" style="display: none;">Cancel</button>
+                </div>
+            </div>
+        </div>
+        </div>
+
+    </form>
+    
+</div>
+    @foreach (var listingModel in Model)
+    { 
+        <div class="wrapper" id="preExistingDashboard">
+            <div class="listing">
+                <div><img class="listingPhoto" src="~/imgSearchHome/IMG_20220102_161928.jpg"/></div>
+                <div class="content">
+                    <p>Property Name: <span class="view-mode listing-name">@listingModel.ListingName</span>
+                        
+                    </p>
+                    <p>I am the pre-existing dashboard</p>
+                    <p>Age: @listingModel.Id</p>
                     <div class="roundPlaceholder">
-                        <p class="roundPlaceholderTxt">Book me</p>
+                        <p class="roundPlaceholderTxt">Book me before you edit</p>
                     </div>
                     <div class="deleteListingBtn">
-                        <a type="button" class="delete" data-entity-id="@listingMd.ListingId" class="btn btn-danger">Delete</a>
+                        <button type="button" class="delete" id="Delete" onclick="Delete(@listingModel.Id)" class="btn btn-danger">Delete</button>
                     </div>
-                    <div class="editListingBtn">
-                        <button type="button" class="btn btn-warning edit-btn view-mode">Edit</button>
+                    <div class="editListingBtn" class="listing">
+                        <button type="button" id="btnEditUser" value="Edit" onclick="EditListing(@listingModel.Id)">Edit</button>
                         <button type="button" class="btn btn-success save-btn edit-mode" style="display: none;">Save</button>
                         <button type="button" class="btn btn-secondary cancel-btn edit-mode" style="display: none;">Cancel</button>
                     </div>
                 </div>
             </div>
-        }
-        else
-        {
-            <p>No listings available.</p>
-        }
-    }
-</div>
+        </div>}
+
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        $(".edit-btn").click(function () {
-            // Show edit mode
-            var parent = $(this).closest(".listing");
-            parent.find(".view-mode").hide();
-            parent.find(".edit-mode").show();
+    //$("#preExistingDashboard").hide()
+    $("#EditDashboardNow").hide()
+    $("#btnCreateUser").click(function () {
+        var ListingDTO_DBTable = {};                   
+        ListingDTO_DBTable.ListingName = $("#NameCreate").val();           
+        //objUser.Address = $("#AddressCreate").val();
+        //objUser.Phone_Number = $("#PhoneNumberCreate").val();
+        $.post("/Home/CreateUser", { ListingDTO_DBTable: ListingDTO_DBTable }, function (data)        
+        {
+            if (data != null) {
+                alert("User Created");
+                location.reload();       //for refreshing the page after saving   
+            }
+            else {
+                alert("Error");
+            }
         });
+    })
+    function EditListing(Id) {
+        $.get("/Home/EditListingJ", { Id: Id }, function (data) {
+            if (data != null) {
+                $("#preExistingDashboard").hide();
+                $("#EditDashboardNow").show();
 
-        $(".cancel-btn").click(function () {
-            // Cancel editing and revert to view mode
-            var parent = $(this).closest(".listing");
-            parent.find(".edit-mode").hide();
-            parent.find(".view-mode").show();
+                // Populate the form with data from the server
+                $("#editPropertyName").val(data.ListingName);
+                $("#EditIdButHidden").val(data.Id);
+            }
         });
+    }
 
-        $(".save-btn").click(function () {
-            // Save changes via AJAX
-            var parent = $(this).closest(".listing");
-            var id = parent.data("id");
-            var newName = parent.find(".listing-name-input").val();
+    $("#btnSaveEdit").click(function () {
+        var ListingDTO_DBTable = {};
+        ListingDTO_DBTable.Id = $("#EditIdButHidden").val();
+        ListingDTO_DBTable.ListingName = $("#editPropertyName").val();
 
-            $.ajax({
-                type: "POST",
-                url: "@Url.Action("Update", "Home")",
-                data: {
-                    ListingId: id,
-                    ListingName_DTO: newName,
-                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() // Anti-forgery token
-                },
-                success: function (response) {
-                    if (response.success) {
-                        // Update view mode content
-                        parent.find(".listing-name").text(newName);
-                        parent.find(".edit-mode").hide();
-                        parent.find(".view-mode").show();
-                    } else {
-                        alert("Error saving changes: " + response.message);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    alert("Error: " + error);
+        // Post the data back to the controller
+        $.ajax({
+            url: "/Home/EditListingJpost",
+            type: "POST",
+            contentType: "application/json",  // Important: Set content type to JSON
+            data: JSON.stringify(ListingDTO_DBTable),  // Send the ListingDTO_DBTable object as JSON
+            success: function (data) {
+                if (data != null && data.success) {
+                    location.reload();  // Reload the page on success
+                    alert("User Edited");
+                } else {
+                    alert("Error occurred while saving the changes.");
                 }
-            });
-        });
-        $(".delete").click(function (e) {
-            e.preventDefault(); // Prevent default action
-
-            var button = $(this); // Reference the clicked button
-            var id = button.data("entity-id"); // Get the ID from data-entity-id attribute
-
-            $.ajax({
-                type: "POST",
-                url: "@Url.Action("DeleteDetails", "Home")", // Correct action for deletion
-                data: {
-                    id: id,
-                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() // Anti-forgery token
-                },
-                dataType: "json", // Expect JSON response
-                success: function (data, status, xhr) {
-                    if (data === "success!") {
-                        button.closest(".listing").hide("slow"); // Hide card on success
-                    } else {
-                        alert("Error: " + data); // Display error message
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log("Error: " + status + " " + error + " " + xhr.status + " " + xhr.statusText);
-                }
-            });
+            },
+            error: function () {
+                alert("An error occurred while trying to save.");
+            }
         });
     });
-</script>
+    
+    $("#btnEditDetail").click(function(){
+        var Id =document.getElementById("IdDetails").textContent;
+        EditUser(Id);
+    })
+    function Delete(Id)
+    {
+        $.post("/Home/DeleteUserJ", { Id:Id }, function (data) {      
+            if (data != null) {
+                location.reload();
+                alert("User Deleted");
+            }
+            else {
+                alert("Error");
+            }
+        });
+    }
 
+
+</script>
 </body>
-</html>
+</html>>

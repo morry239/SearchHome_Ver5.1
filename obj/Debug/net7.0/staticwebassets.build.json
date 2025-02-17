@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "tus7jHrne8PJHkMNJkhvK7hXe9F2fK3O8NceIMMzIA8=",
+  "Hash": "Q5eDcYMtpohY9IKCsR77cBNQvLwthdeln5jk0Slt6cA=",
   "Source": "SearchHome",
   "BasePath": "_content/SearchHome",
   "Mode": "Default",
@@ -1086,6 +1086,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/css/dashboard.css"
+    },
+    {
+      "Identity": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/css/dashboardAsOf1712_24.css",
+      "SourceId": "SearchHome",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/",
+      "BasePath": "_content/SearchHome",
+      "RelativePath": "css/dashboardAsOf1712_24.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/css/dashboardAsOf1712_24.css"
     },
     {
       "Identity": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/css/site.css",

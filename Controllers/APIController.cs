@@ -24,7 +24,7 @@ public class APIController : Controller
                 select new ListingProjectsDTO()
                 {
                     ListingId = b.ListingId,
-                    ListingName_DTO = b.ListingName_DTO
+                    ListingName = b.ListingName
                 };
 
             return listings.ToList();
@@ -36,7 +36,7 @@ public class APIController : Controller
         {
             if (id < 1)
                 return BadRequest();
-            var product = await _context.ListingDBTable.FirstOrDefaultAsync(m => m.Id == id);
+            var product = await _context.ListingDTO_DBTable.FirstOrDefaultAsync(m => m.ListingId == id);
             if (product == null)
                 return NotFound();
             return Ok(product);
@@ -58,27 +58,27 @@ public class APIController : Controller
 
             var dto = new ListingProjectsDTO()
             {
-                ListingId = listing.Id,
-                ListingName_DTO = listing.ListingName
+                ListingId = listing.ListingId,
+                ListingName = listing.ListingName
 
             };
             
-            return CreatedAtRoute("DefaultApi", new { id = listing.Id }, dto);
+            return CreatedAtRoute("DefaultApi", new { id = listing.ListingId }, dto);
         }
         
         [HttpPut]
         public async Task<IActionResult> Put(ListingProjects listingData)
         {
-            if (listingData == null || listingData.Id == 0)
+            if (listingData == null || listingData.ListingId == 0)
                 return BadRequest();
 
-            var listingTask = await _context.ListingDBTable.FindAsync(listingData.Id);
+            var listingTask = await _context.ListingDTO_DBTable.FindAsync(listingData.ListingId);
             if (listingTask == null)
                 return NotFound();
             listingTask.ListingName = listingData.ListingName;
-            listingTask.ImageUrl = listingData.ImageUrl;
-            listingTask.Category = listingData.Category;
-            listingTask.Location = listingData.Location;
+            //listingTask.ImageUrl = listingData.ImageUrl;
+            //listingTask.Category = listingData.Category;
+            //listingTask.Location = listingData.Location;
             await _context.SaveChangesAsync();
             return Ok();
         }
@@ -88,10 +88,10 @@ public class APIController : Controller
         {
             if (id < 1)
                 return BadRequest();
-            var listingDel = await _context.ListingDBTable.FindAsync(id);
+            var listingDel = await _context.ListingDTO_DBTable.FindAsync(id);
             if (listingDel == null) 
                 return NotFound();
-            _context.ListingDBTable.Remove(listingDel);
+            _context.ListingDTO_DBTable.Remove(listingDel);
             await _context.SaveChangesAsync();
             return Ok();
 

@@ -1,48 +1,74 @@
-@model List<ListingProjectsDTO>
+@model ListingProjectsDTO
 
 @{
-    ViewData["Title"] = "Insert Listings";
+    ViewBag.Title = "InsertListings";
 }
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
-</head>
-<body>
+<h2>Insert Listings</h2>
+<script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+<p>
+    <input type="button" id="btnCreateUser" value="Create User"  class="btn btn-default" />
+</p>
 
-@Html.AntiForgeryToken()
-@using (Html.BeginForm("InsertListings", "Home", FormMethod.Post))
-{
-    // Loop through each ListingProjectsDTO in the Model (which is List<ListingProjectsDTO>)
-    foreach (var listingMd in Model)
-    {
-        // Create a new table for each item
-        <table id="tblCust" class="table table-bordered">
-            <thead>
-            <tr>
-                <td>@Html.Label("ListingName_DTO", "Listing Name", new { @class = "control-label" })</td>
-            </tr>
-            <tr>
-                <td>@Html.TextBox($"Listings[{Model.IndexOf(listingMd)}].ListingName_DTO", listingMd.ListingName_DTO, new { @class = "form-control" })</td>
-            </tr>
-            <tr>
-                <td>
-                    <input type="submit" 
-                           style="float:right;" 
-                           data-entity-id="@listingMd.ListingId" 
-                           id="saveBtn" 
-                           class="btn btn-info" 
-                           value="Save" />
-                </td>
-            </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    }
-}
 
-</body>
-</html>
+<table id="preExistingDashboard" class="table"></table>
 
+
+<div id="InsertListings" class="form-horizontal">
+    <h4>Users</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        <label class = "control-label col-md-2">Name</label>
+        <div class="col-md-10">
+            <input class="form-control" type="text" name="Name" id="Name"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class = "control-label col-md-2">Name</label>
+        <div class="col-md-10">
+            <input class="form-control" type="text" name="Name" id="Name"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2">Address</label>
+        <div class="col-md-10">
+            <input class="form-control" type="text" name="Address" id="Address" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2">Phone Number</label>
+        <div class="col-md-10">
+            <input class="form-control" type="text" name="PhoneNumber" id="PhoneNumber" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="button" id="btnCreate"value="Create" class="btn btn-default" />
+            <input type="button" id="btnJson" value="Create Json"  class="btn btn-default" />
+        </div>
+    </div>
+</div>  
+<script type="text/javascript">  
+$("#btnCreate").click(function () {  
+        var objUser = {}; 
+        //objUser is variable through which i am passing the details filled by the user to the controller  
+        objUser.ListingId = 
+        objUser.ListingName = $("#Name").val();            //fetching value from the textbox  
+        objUser.CategoryId = $("#Address").val();  
+        objUser.LocationId = $("#PhoneNumber").val();  
+        $.post("/Home/InsertListings/", { objUser: objUser }, function (data)        //data is a variable which contains the data returned from the action method  
+        {  
+            if (data != null) {                  
+                alert("User Created");  
+                location.reload();       //for refreshing the page after saving   
+            }  
+            else {  
+                alert("Error");  
+            }  
+        });  
+    })  
+ </script>  

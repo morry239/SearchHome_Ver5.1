@@ -12,7 +12,7 @@ build_property.RootNamespace = WebApplication1
 build_property.ProjectDir = /Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/
 build_property.RazorLangVersion = 7.0
 build_property.SupportLocalizedComponentNames = 
-build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = true
 build_property.MSBuildProjectDirectory = /Users/mamikawamura/RiderProjects/WebApplication1/SearchHome
 build_property._RazorSourceGeneratorDebug = 
 
@@ -20,8 +20,8 @@ build_property._RazorSourceGeneratorDebug =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXMvSWRlbnRpdHkvUGFnZXMvX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/Views/Home/Edit.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9FZGl0LmNzaHRtbA==
+[/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/Views/Home/EditListingJ.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9FZGl0TGlzdGluZ0ouY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/Views/Home/Index.cshtml]
@@ -30,10 +30,6 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/Views/Home/InsertListings.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9JbnNlcnRMaXN0aW5ncy5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/Views/Home/JumpToDashboard.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9KdW1wVG9EYXNoYm9hcmQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/Views/Home/Privacy.cshtml]

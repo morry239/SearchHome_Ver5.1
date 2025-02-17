@@ -1,0 +1,93 @@
+@model WebApplication1.Models.ListingProjectsDTO
+
+@{
+    ViewBag.Title = "EditDashboard";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>EditDashboard</title>
+</head>
+<body>
+
+<h4>ListingProjectsDTO</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditDashboard" id="EditDashboard">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" />
+                <span asp-validation-forId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ListingName" class="control-label"></label>
+                <input asp-for="ListingName" class="form-control" id="propertyNameEdit"/>
+                <span asp-validation-for="ListingName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CategoryId" class="control-label"></label>
+                <input asp-for="CategoryId" class="form-control"/>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LocationId" class="control-label"></label>
+                <input asp-for="LocationId" class="form-control" />
+                <span asp-validation-for="LocationId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+<script type="text/javascript">
+    function EditUser(ListingId)
+    {
+        $.get("/Home/EditDashboard/",{Id:ListingId},function(data){              //fetching data of the selected user from controller  
+            if(data!=null)
+            {
+                //$("#tableUser").hide();
+                //$("#CreateUser").hide();
+                $("#EditUser").show();
+
+                //data contains the details of the user   
+                // now showing those details in the textbox  
+
+                $("#propertyNameEdit").val(data.ListingName);
+                //$("#AddressEdit").val(data.Address);
+                //$("#PhoneNumberEdit").val(data.Phone_Number);
+                //$("#IdEdit").val(data.Id);
+            }
+        });
+    }
+
+
+    $("#btnSaveEdit").click(function(){
+        var objUser={};                      //same action as per creating the user  
+        //objUser.Id= $("#IdEdit").val();
+        objUser.ListingName= $("#propertyNameEdit").val();
+        //objUser.Address = $("#AddressEdit").val();
+        //objUser.Phone_Number = $("#PhoneNumberEdit").val();
+        $.post("/Home/EditDashboard/", { objUser: objUser }, function (data)
+        {
+            if (data != null) {
+                location.reload();
+                alert("User Edited");
+            }
+            else {
+                alert("Error");
+            }
+        });
+    })
+</script>
+</body>
+</html>

@@ -9,6 +9,10 @@
       "PackagePath": "staticwebassets/css/dashboard.css"
     },
     {
+      "Id": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/css/dashboardAsOf1712_24.css",
+      "PackagePath": "staticwebassets/css/dashboardAsOf1712_24.css"
+    },
+    {
       "Id": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/css/site.css",
       "PackagePath": "staticwebassets/css/site.css"
     },

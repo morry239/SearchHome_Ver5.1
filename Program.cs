@@ -3,8 +3,11 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
+
 using WebApplication1.Models;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
+using WebApplication1.Controllers;
 using WebApplication1.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,12 +35,23 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
 });
 
+builder.Services.AddScoped<IListingProjectsDtoRepository, SQLListinDtoRepository>();
+
+
 builder.Services.AddAuthentication();
 builder.Services.AddHttpClient();
+builder.Services.AddControllers().AddNewtonsoftJson();
+builder.Services.ConfigureHttpJsonOptions(options => {
+    options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    // set other desired options here...
+    options.SerializerOptions.WriteIndented = true;
+    options.SerializerOptions.IncludeFields = true;
+});
 builder.Services.AddControllersWithViews().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    
 });
 
 // Session-Service hinzufügen
@@ -49,14 +63,21 @@ builder.Services.AddSession(options =>
 });
 
 
+
+builder.Services.AddMvc()
+    .AddRazorPagesOptions(options => {
+        options.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
+    }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();
-    var seeder = new DataSeed(db);
-    seeder.SeedModels();  
+    /*var seeder = new DataSeed(db);
+    seeder.SeedModels();  */
 }
 
 using(var scope = app.Services.CreateScope())

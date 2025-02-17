@@ -1,0 +1,118 @@
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@model IEnumerable<ListingProjectsDTO>
+
+@{
+    ViewData["Title"] = "DashboardEdited";
+    var listingDefaultList = (List<ListingProjectsDTO>)ViewData["List"];
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width"/>
+    <title>TestDashboard1_Edited</title>
+    <link rel="stylesheet" type="text/css" href="~/css/dashboardAsOf1712_24.css" />
+</head>
+<body>
+
+    <div class="wrapper" id="preExistingDashboard">
+        <div class="listing">
+            <div><img class="listingPhoto" src="~/imgSearchHome/IMG_20220102_161928.jpg"/></div>
+            <div class="content">
+                <p>Property Name: <span class="view-mode listing-name">@Html.DisplayForModel()</span>
+                    <p>I am the new EditJ </p>
+                </p>
+                <p>Age: </p>
+                <div class="roundPlaceholder">
+                    <p class="roundPlaceholderTxt">Book me before you edit</p>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+<script type="text/javascript">
+    //$("#preExistingDashboard").hide()
+    $("#EditDashboardNow").hide()
+    $("#btnCreateUser").click(function () {
+        var ListingDTO_DBTable = {};
+        ListingDTO_DBTable.ListingName = $("#NameCreate").val();
+        //objUser.Address = $("#AddressCreate").val();
+        //objUser.Phone_Number = $("#PhoneNumberCreate").val();
+        $.post("/Home/CreateUser", { ListingDTO_DBTable: ListingDTO_DBTable }, function (data)
+        {
+            if (data != null) {
+                alert("User Created");
+                location.reload();       //for refreshing the page after saving   
+            }
+            else {
+                alert("Error");
+            }
+        });
+    })
+    function EditListing(Id)
+    {
+        $.get("/Home/EditListingJ",{Id:Id},function(data){              //fetching data of the selected user from controller  
+            if(data!=null)
+            {
+                $("#preExistingDashboard").hide();
+                //$("#CreateUser").hide();
+                $("#EditDashboardNow").show();
+                //$("#editDashboardOnClick").show();
+
+                //data contains the details of the user   
+                // now showing those details in the textbox  
+
+                $("#editPropertyName").val(data.ListingName);
+                //$("#AddressEdit").val(data.Address);
+                //$("#PhoneNumberEdit").val(data.Phone_Number);
+                $("#EditIdButHidden").val(data.Id);
+            }
+        });
+    }
+
+
+    $("#btnSaveEdit").click(function(){
+        var ListingDTO_DBTable ={};
+        ListingDTO_DBTable.ListingId= $("#EditIdButHidden").val();
+        ListingDTO_DBTable.ListingName = $("#editPropertyName").val();
+        //objUser.Address = $("#AddressEdit").val();
+        //objUser.Phone_Number = $("#PhoneNumberEdit").val();
+        $.post("/Home/EditListingJ",
+            { ListingDTO_DBTable: ListingDTO_DBTable }, function (data)
+            {
+                /*headers: {
+                    'application/json'
+                }*/
+                if (data != null) {
+                    location.reload();
+                    alert("User Edited");
+                }
+                else {
+                    alert("Error");
+                }
+            });
+    })
+
+    $("#btnEditDetail").click(function(){
+        var Id =document.getElementById("IdDetails").textContent;
+        EditUser(Id);
+    })
+    function Delete(Id)
+    {
+        $.post("/Home/DeleteUserJ", { Id:Id }, function (data) {
+            if (data != null) {
+                location.reload();
+                alert("User Deleted");
+            }
+            else {
+                alert("Error");
+            }
+        });
+    }
+
+
+</script>
+</body>
+</html>

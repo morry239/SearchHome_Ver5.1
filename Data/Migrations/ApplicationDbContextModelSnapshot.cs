@@ -7,7 +7,7 @@ using WebApplication1.Data;
 
 #nullable disable
 
-namespace WebApplication1.Data.Migrations
+namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -18,6 +18,38 @@ namespace WebApplication1.Data.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("ListingProjects", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CategoryId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<string>("ListingName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("ListingProjectsDTOId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("LocationId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("ListingProjectsDTOId");
+
+                    b.HasIndex("LocationId");
+
+                    b.ToTable("ListingDBTable");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -170,48 +202,37 @@ namespace WebApplication1.Data.Migrations
                     b.ToTable("CategoriesDBTable");
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.ListingProjects", b =>
+            modelBuilder.Entity("WebApplication1.Models.ListingDtoEditClass", b =>
+                {
+                    b.Property<int?>("ListingIdToBeEdited")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("ListingNameToBeEdited")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("ListingIdToBeEdited");
+
+                    b.ToTable("ListingDtoEdit_DBTable");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.ListingProjectsDTO", b =>
                 {
                     b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("longtext");
-
                     b.Property<string>("ListingName")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("LocationId")
+                    b.Property<int?>("ShadowDtoToGetRidOfDBNullId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("LocationId");
-
-                    b.ToTable("ListingDBTable");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.ListingProjectsDTO", b =>
-                {
-                    b.Property<int?>("ListingId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("ListingName_DTO")
-                        .HasColumnType("longtext");
-
-                    b.Property<int?>("ListingProjectsFKId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ListingId");
-
-                    b.HasIndex("ListingProjectsFKId");
+                    b.HasIndex("ShadowDtoToGetRidOfDBNullId");
 
                     b.ToTable("ListingDTO_DBTable");
                 });
@@ -312,6 +333,31 @@ namespace WebApplication1.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("ListingProjects", b =>
+                {
+                    b.HasOne("WebApplication1.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApplication1.Models.ListingProjectsDTO", "ListingProjectsDTO")
+                        .WithMany()
+                        .HasForeignKey("ListingProjectsDTOId");
+
+                    b.HasOne("WebApplication1.Models.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("ListingProjectsDTO");
+
+                    b.Navigation("Location");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -363,28 +409,13 @@ namespace WebApplication1.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.ListingProjects", b =>
-                {
-                    b.HasOne("WebApplication1.Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId");
-
-                    b.HasOne("WebApplication1.Models.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId");
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Location");
-                });
-
             modelBuilder.Entity("WebApplication1.Models.ListingProjectsDTO", b =>
                 {
-                    b.HasOne("WebApplication1.Models.ListingProjects", "ListingProjectsFK")
+                    b.HasOne("WebApplication1.Models.ListingProjectsDTO", "ShadowDtoToGetRidOfDBNull")
                         .WithMany()
-                        .HasForeignKey("ListingProjectsFKId");
+                        .HasForeignKey("ShadowDtoToGetRidOfDBNullId");
 
-                    b.Navigation("ListingProjectsFK");
+                    b.Navigation("ShadowDtoToGetRidOfDBNull");
                 });
 #pragma warning restore 612, 618
         }

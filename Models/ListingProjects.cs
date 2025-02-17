@@ -1,25 +1,24 @@
-using System.Collections;
 using System.ComponentModel.DataAnnotations;
-
-namespace WebApplication1.Models;
+using WebApplication1.Models;
 
 public class ListingProjects
 {
-    [Key] // Explicitly define the primary key
-    public int? Id { get; set; }
+    [Key]
+    public int? Id { get; set; } // Primary key
 
-    [Microsoft.Build.Framework.Required]
+    [Required]
     public string? ListingName { get; set; }
 
-    [Microsoft.Build.Framework.Required]
-    public string? ImageUrl { get; set; }
+    //[Required]
+    //public string? ImageUrl { get; set; }
 
-    // Navigation properties to child model classes
-    [Microsoft.Build.Framework.Required]
+    [Required]
     public int? CategoryId { get; set; }
     public Category? Category { get; set; }
 
-    [Microsoft.Build.Framework.Required]
+    [Required]
     public int? LocationId { get; set; }
     public Location? Location { get; set; }
+
+    public ListingProjectsDTO? ListingProjectsDTO { get; set; } // Navigation property
 }

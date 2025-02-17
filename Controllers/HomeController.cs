@@ -1,24 +1,38 @@
 ﻿using System.Diagnostics;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Models;
 using Microsoft.AspNetCore.Authorization;
 using WebApplication1.Data;  
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace WebApplication1.Controllers;
+
+public interface IListingProjectsDtoRepository
+{
+    ListingProjectsDTO GetListingProjectsDto(int? Id);
+    IEnumerable<ListingProjectsDTO> GetAllEmployee();
+    //Employee Add(Employee employee);
+    ListingProjectsDTO Update(ListingProjectsDTO listingProjectsDtoChanges);
+    //Employee Delete(int Id);
+}
 
 
 public class HomeController : Controller
 {
     private readonly HttpClient _httpClient;
     private readonly ApplicationDbContext _context;  
-    private readonly ListingProjects _listingProjects;
+    private ListingProjectsDTO _listingProjectsDto;
+    private readonly IListingProjectsDtoRepository _listingProjectsDtoRepository;
     
-    public HomeController(HttpClient httpClient, ApplicationDbContext context)
+    public HomeController(HttpClient httpClient, ApplicationDbContext context, IListingProjectsDtoRepository listingProjectsDtoRepository)
     {
         _httpClient = httpClient; 
         _context = context;
+        _listingProjectsDtoRepository = listingProjectsDtoRepository;
     }
 
     [Authorize]
@@ -35,231 +49,118 @@ public class HomeController : Controller
         return View(portalUserModelRef);
     }
 
-    public IActionResult Edit(int? Id)
+    [HttpGet]  
+    public JsonResult EditListingJ(int? Id)    //For getting details of the selected User  
     {
+        try
+        {
+            
+            ListingProjectsDTO StartEditListing = _context.ListingDTO_DBTable.Find(Id);
+            Console.WriteLine("GET success");
+            return Json(StartEditListing);
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+        
+    }  
+    
+    [HttpPost]
+    public async Task<JsonResult> EditListingJpost([FromForm] int? Id, [FromForm] string ListingName)
+    {
+        // Ensure Id is valid and not null
         if (Id == null)
         {
-            return NotFound("The provided Id is null.");
+            return Json(new { success = false, message = "Id is required." });
         }
 
-        var editedUserModelRef = _context.ListingDTO_DBTable
-            .Include(dto => dto.ListingProjectsFK) // Include related data
-            .FirstOrDefault(e => e.ListingProjectsFKId == Id);
-
-        if (editedUserModelRef == null)
+        // Retrieve the listing based on the Id
+        var listingToUpdate = await _context.ListingDTO_DBTable.FirstOrDefaultAsync(s => s.Id == Id);
+   
+        if (listingToUpdate == null)
         {
-            return NotFound($"No entry found for Id = {Id}");
+            return Json(new { success = false, message = "Listing not found." });
         }
 
-        return View(editedUserModelRef);
-    }
-
-
-
-    [HttpPost]
-    public IActionResult Update(ListingProjectsDTO updatedUserModelRef)
-    {
-        if (updatedUserModelRef == null || updatedUserModelRef.ListingProjectsFKId == null)
-        {
-            // Return JSON error response for AJAX or standard NotFound for non-AJAX
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            {
-                return Json(new { success = false, message = "Invalid data received." });
-            }
-            return NotFound(); 
-        }
-
-        var oldListingProjects = _context.ListingDTO_DBTable.FirstOrDefault(e => e.ListingProjectsFKId == updatedUserModelRef.ListingProjectsFKId);
-        if (oldListingProjects == null)
-        {
-            // Return JSON error response for AJAX or standard NotFound for non-AJAX
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            {
-                return Json(new { success = false, message = "Record not found." });
-            }
-            return NotFound(); 
-        }
+        // Update the listing's name
+        listingToUpdate.ListingName = ListingName;
 
         try
         {
-            // Update the record
-            _context.Entry(oldListingProjects).CurrentValues.SetValues(updatedUserModelRef);
-            _context.SaveChanges();
+            // Save changes to the database
+            await _context.SaveChangesAsync();
 
-            // If AJAX request, return JSON success
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            {
-                return Json(new { success = true, message = "Record updated successfully!" });
-            }
-
-            // Otherwise, redirect to the dashboard
-            return RedirectToAction("TestDashboard1");
+            // Return the updated listing as a JSON response
+            return Json(new { success = true, updatedListing = listingToUpdate });
         }
-        catch (Exception ex)
+        catch (DbUpdateException)
         {
-            // Handle errors and provide feedback for AJAX or non-AJAX
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            {
-                return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
-            }
-
-            // For non-AJAX requests, consider logging and returning a friendly error page
-            return StatusCode(500, "An error occurred while updating the record.");
+            // In case of an error, return an error message
+            ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, contact the system administrator.");
+            return Json(new { success = false, message = "Unable to save changes. Please try again later." });
         }
     }
-
-
+    
+    [HttpPost]  
+    public JsonResult CreateUser()         //objUser is object which should be same as in javascript function  
+    {  
+        try  
+        {  
+             
+            _context.ListingDTO_DBTable.Add(_listingProjectsDto);  
+            _context.SaveChanges();  
+            return Json(_listingProjectsDto);        //returning user to javacript  
+              
+        }  
+        catch (Exception ex)  
+        {  
+            return null;  
+        }  
+    }  
    
-   [HttpGet]
-   public IActionResult InsertListings()
-   {
-       // Create a list with a single new ListingProjectsDTO to initialize the form
-       var listings = new List<ListingProjectsDTO>
-       {
-           new ListingProjectsDTO() // Add an empty DTO for user input
-       };
-
-       // Pass the list to the view
-       return View(listings);
-   }
-
-   [HttpPost]
-   [ValidateAntiForgeryToken]
-   public async Task<IActionResult> InsertListings(List<ListingProjectsDTO> listingProjectsDtos)
-   {
-       if (ModelState.IsValid)
-       {
-           try
-           {
-               
-               foreach (var dto in listingProjectsDtos)
-               {
-                   // Add ListingProjects entry to the context
-                   var addListings = new ListingProjects
-                   {
-                       Id = dto.ListingId,
-                       ListingName = dto.ListingName_DTO
-                   };
-                   _context.ListingDBTable.Add(addListings);
-
-                   // Add the corresponding DTO (Id will be generated by EF when changes are saved)
-                   var addDTO = new ListingProjectsDTO
-                   {
-                       ListingProjectsFKId = addListings.Id, // EF Core handles Id assignment during SaveChanges
-                       ListingName_DTO = dto.ListingName_DTO
-                   };
-                   _context.ListingDTO_DBTable.Add(addDTO);
-               }
-
-// Save all changes in one batch
-               await _context.SaveChangesAsync();
-
-// Refresh and pass the updated listings
-               var listings = await _context.ListingDBTable
-                   .Select(listing => new ListingProjectsDTO
-                   {
-                       ListingId = listing.Id,
-                       ListingName_DTO = listing.ListingName
-                   })
-                   .ToListAsync();
-
-               return RedirectToAction("TestDashboard1");
-
-
-               //return View("TestDashboard1", listings);
-           }
-           catch (DbUpdateException ex)
-           {
-               ModelState.AddModelError("", "An error occurred while saving the listing.");
-           }
-       }
-
-       return View(listingProjectsDtos);
-   }
-
-
-
     public IActionResult Privacy()
     {
         return View();
     }
    
     
-    public async Task<IActionResult> DeleteDetails(int? id, bool? saveChangesError = false)
-    {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
-        var listingToBeDeleted = await _context.ListingDBTable
-            .AsNoTracking()
-            .FirstOrDefaultAsync(m => m.Id == id);
-        if (listingToBeDeleted == null)
-        {
-            return NotFound();
-        }
-
-        if (saveChangesError.GetValueOrDefault())
-        {
-            ViewData["ErrorMessage"] =
-                "Delete failed. Try again, and if the problem persists " +
-                "see your system administrator.";
-        }
-        ViewData["OKMessage"] =
-            "confirm deletion";
-
-        return View(listingToBeDeleted);
-    }
-    
-    [HttpPost, ActionName("DeleteDetails")]
-    [ValidateAntiForgeryToken]
-    [HttpPost]
-    public async Task<IActionResult> DeleteConfirmed(int id)
-    {
-        try
-        {
-            // Find the listing to be deleted
-            var listingToBeDeleted = await _context.ListingDBTable.FindAsync(id);
-            if (listingToBeDeleted == null)
-            {
-                return Json("Not found at all");
-            }
-
-            // Delete related entries from ListingDTO_DBTable
-            var relatedEntries = await _context.ListingDTO_DBTable
-                .Where(dto => dto.ListingProjectsFKId == id) // Compare with the foreign key ID
-                .ToListAsync();
-            _context.ListingDTO_DBTable.RemoveRange(relatedEntries);
-
-            // Now delete the listing
-            _context.ListingDBTable.Remove(listingToBeDeleted);
-            await _context.SaveChangesAsync();
-
-            return Json("success!");
-        }
-        catch (Exception ex)
-        {
-            return Json("An error occurred: " + ex.Message);
-        }
-    }
-    
-    
+    [HttpPost]  
+    public JsonResult DeleteUserJ(int Id)  
+    {  
+        try  
+        {  
+            var ListingDTO_DBTable = _context.ListingDTO_DBTable.Find(Id);         //fetching the user with Id   
+            if (ListingDTO_DBTable != null)  
+            {  
+                _context.ListingDTO_DBTable.Remove(ListingDTO_DBTable);              //deleting from db  
+                _context.SaveChanges();  
+                return Json(ListingDTO_DBTable);  
+            }  
+            return Json(null);  
+        }  
+  
+        catch (Exception ex)  
+        {  
+            return null;  
+        }  
+    }  
     
     [AllowAnonymous]
 
     public async Task<IActionResult> TestDashboard1()
     {
-        var datasource = _context.ListingDBTable.AsQueryable();
+        var datasource = _context.ListingDTO_DBTable.AsQueryable();
         var query = datasource
-            .Select(x => new ListingProjectsDTO {
-                ListingId = x.Id,
-                ListingName_DTO = x.ListingName,
+            .Select(x => new ListingProjectsDTO() {
+                Id = x.Id,
+                ListingName = x.ListingName,
             });
+        
         var listings = await query.ToListAsync();
-
         return View(listings);
     }
+    
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
