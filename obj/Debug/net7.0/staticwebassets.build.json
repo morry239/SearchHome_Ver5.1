@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "Q5eDcYMtpohY9IKCsR77cBNQvLwthdeln5jk0Slt6cA=",
+  "Hash": "PrNIi89VwwJUXIQZ8bj/posCFz1XvzKQVcN8Q2PdQoQ=",
   "Source": "SearchHome",
   "BasePath": "_content/SearchHome",
   "Mode": "Default",
@@ -1137,6 +1137,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/favicon.ico"
+    },
+    {
+      "Identity": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/imgSearchHome/5352886237599493963.jpg",
+      "SourceId": "SearchHome",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/",
+      "BasePath": "_content/SearchHome",
+      "RelativePath": "imgSearchHome/5352886237599493963.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/imgSearchHome/5352886237599493963.jpg"
     },
     {
       "Identity": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/imgSearchHome/IMG_20220102_161928.jpg",

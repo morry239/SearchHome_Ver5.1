@@ -5,7 +5,7 @@ using MessagePack;
 
 namespace WebApplication1.Models;
 
-public class ListingProjectsDTO 
+public class ListingProjects_ver2
 {
     
     [System.ComponentModel.DataAnnotations.Key]
@@ -15,7 +15,9 @@ public class ListingProjectsDTO
     [Required]
     public string? ListingName { get; set; } // Mapped from ListingName in ListingProjects
 
-   
+    [Required]
+    [NotMapped]
+    public IFormFile? ListingImage { get; set; }
 }
 
 

@@ -20,5 +20,5 @@ public class ListingProjects
     public int? LocationId { get; set; }
     public Location? Location { get; set; }
 
-    public ListingProjectsDTO? ListingProjectsDTO { get; set; } // Navigation property
+    //public ListingProjects_ver2? ListingProjectsDTO { get; set; } // Navigation property
 }

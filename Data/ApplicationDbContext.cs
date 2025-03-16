@@ -16,9 +16,9 @@ public class ApplicationDbContext : IdentityDbContext<PortalUsers>
 
     public Microsoft.EntityFrameworkCore.DbSet<PortalUsers> UsersDBTable { get; set; }
     //public Microsoft.EntityFrameworkCore.DbSet<Category> CategoriesDBTable { get; set; }
-    //public Microsoft.EntityFrameworkCore.DbSet<ListingProjects> ListingDBTable { get; set; }
+    public Microsoft.EntityFrameworkCore.DbSet<ListingProjects> ListingDBTable { get; set; }
     //public Microsoft.EntityFrameworkCore.DbSet<Location> LocationDBTable { get; set; }
-    public Microsoft.EntityFrameworkCore.DbSet<ListingProjectsDTO> ListingDTO_DBTable { get; set; }
+    public Microsoft.EntityFrameworkCore.DbSet<ListingProjects_ver2> ListingVer2_DBTable { get; set; }
     public Microsoft.EntityFrameworkCore.DbSet<ListingDtoEditClass> ListingDtoEdit_DBTable { get; set; }
     
     

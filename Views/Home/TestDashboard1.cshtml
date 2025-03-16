@@ -1,183 +1,190 @@
-@model IEnumerable<ListingProjectsDTO>
-
+@model IEnumerable<ListingProjects_ver2>
 @{
-  ViewData["Title"] = "Dashboard";
-  
-  var listingMd = Model?.FirstOrDefault();
+    ViewData["Title"] = "Dashboard";
+
+    var listingMd = Model?.FirstOrDefault();
 }
+
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
-    <meta name="viewport" content="width=device-width"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta name="viewport" content="width=device-width" />
     <title>TestDashboard1</title>
     <link rel="stylesheet" type="text/css" href="~/css/dashboardAsOf1712_24.css" />
 </head>
 <body>
-<p>
-    <input type="button" id="btnCreateUser" value="Create User Button!"  class="btn btn-default" />
-</p>
 
-<div id="CreateUser" class="form-horizontal">
-    <h4>Users</h4>
+<div id="CreateUser" class="form-horizontal" method="post" asp-action="CreateUser" asp-controller="Home">
+    <h4>Properties</h4>
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.ValidationMessage("validation")
     <div class="form-group">
-        <label class = "control-label col-md-2">Name</label>
+        <label class="control-label col-md-2">Name</label>
         <div class="col-md-10">
-            <input class="form-control" type="text" name="Name" id="Name"/>
+            <input class="form-control" type="text" name="ListingName" id="ListingName" />
+            <input class="form-control" type="text" name="ListingImage" id="ListingImage" />
         </div>
     </div>
-
-    <div class="form-group">
-        <label class="control-label col-md-2">Address</label>
-        <div class="col-md-10">
-            <input class="form-control" type="text" name="Address" id="Address" />
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label class="control-label col-md-2">Phone Number</label>
-        <div class="col-md-10">
-            <input class="form-control" type="text" name="PhoneNumber" id="PhoneNumber" />
-        </div>
-    </div>
-
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="button" id="btnCreate"value="Create" class="btn btn-default" />
-            <input type="button" id="btnJson" value="Create Json"  class="btn btn-default" />
+            <input type="submit" id="btnCreateListing" value="click me to create" class="btn btn-default" />
         </div>
     </div>
 </div>
 
-<div id="EditDashboardNow" method="post" name="editSubmitId">
-    <form method="post" asp-controller="Home" asp-action="EditListingJpost" enctype="multipart/form-data">
-        <div class="listing form-horizontal">
-           
-            <div class="content">
-                <div><img class="listingPhoto" src="~/imgSearchHome/IMG_20220102_161928.jpg" /></div>
-                <div class="content">
-                    <!-- Hidden input for Id -->
-                    <input type="hidden" value="@listingMd.Id" id="EditIdButHidden" name="Id" />
-                    <input type="hidden" value="@listingMd.ListingName" id="editPropertyName" name="ListingName" />
 
-                    <p>Property Name:
-                    <div class="form-group">
-                        <input class="form-control" id="editPropertyName" name="ListingName" value="@listingMd.ListingName"/>
-                        
+    <div id="EditDashboardNow" method="post" name="editSubmitId">
+        <form method="post" asp-controller="Home" asp-action="EditListingJpost" enctype="multipart/form-data">
+            <div class="listing form-horizontal">
+                <div class="content">
+                    <div><img class="listingPhoto" src="~/imgSearchHome/IMG_20220102_161928.jpg" /></div>
+                    <div class="content">
+                        <!-- Hidden input for Id -->
+                        <input type="hidden" value="@listingMd.Id" id="EditIdButHidden" name="Id" />
+                        <p>
+                            Property Name:
+                            <div class="form-group">
+                                <input class="form-control" id="editPropertyName" name="ListingName"/>
+                            </div>
+                        </p>
+                        <picture>I am the EditDashboard now</picture>
+                        <p>Age: </p>
+                        <div class="roundPlaceholder">
+                            <p class="roundPlaceholderTxt">Book me once you edit</p>
+                        </div>
+                        <div class="deleteListingBtn">
+                            <button type="button" class="delete" id="Delete" class="btn btn-danger">Delete</button>
+                        </div>
+                        <div>
+                            <button type="submit" id="btnSaveEdit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-secondary cancel-btn edit-mode" style="display: none;">Cancel</button>
+                        </div>
                     </div>
-                    </p>
-                    <picture>I am the EditDashboard now</picture>
-                <p>Age: </p>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+<div class="wrapper" id="preExistingDashboard">
+@foreach (var listingModel in Model)
+{
+   
+        <div class="listing">
+            <div><img class="listingPhoto" src="~/imgSearchHome/IMG_20220102_161928.jpg" /></div>
+            <div class="content">
+                <p>
+                    Property Name: <span class="view-mode listing-name">@listingModel.ListingName</span>
+
+                </p>
+                <p>I am the pre-existing dashboard</p>
+                <p>Age: @listingModel.Id</p>
                 <div class="roundPlaceholder">
-                    <p class="roundPlaceholderTxt">Book me once you edit</p>
+                    <p class="roundPlaceholderTxt">Book me before you edit</p>
                 </div>
                 <div class="deleteListingBtn">
-                    <button type="button" class="delete" id="Delete" class="btn btn-danger">Delete</button>
+                    <button type="button" class="delete" id="Delete" onclick="Delete(@listingModel.Id)" class="btn btn-danger">Delete</button>
                 </div>
-                <div>
-                    <button type="button" id="btnSaveEdit" value="@listingMd.Id" onclick="EditListingJpost(@listingMd.Id, @listingMd.ListingName)">Save</button>
+                <div class="editListingBtn" class="listing">
+                    <button type="button" id="btnEditUser" value="Edit" onclick="EditListing(@listingModel.Id)">Edit</button>
+                    <button type="button" class="btn btn-success save-btn edit-mode" style="display: none;">Save</button>
                     <button type="button" class="btn btn-secondary cancel-btn edit-mode" style="display: none;">Cancel</button>
                 </div>
             </div>
         </div>
-        </div>
-
-    </form>
-    
+   
+}
 </div>
-    @foreach (var listingModel in Model)
-    { 
-        <div class="wrapper" id="preExistingDashboard">
-            <div class="listing">
-                <div><img class="listingPhoto" src="~/imgSearchHome/IMG_20220102_161928.jpg"/></div>
-                <div class="content">
-                    <p>Property Name: <span class="view-mode listing-name">@listingModel.ListingName</span>
-                        
-                    </p>
-                    <p>I am the pre-existing dashboard</p>
-                    <p>Age: @listingModel.Id</p>
-                    <div class="roundPlaceholder">
-                        <p class="roundPlaceholderTxt">Book me before you edit</p>
-                    </div>
-                    <div class="deleteListingBtn">
-                        <button type="button" class="delete" id="Delete" onclick="Delete(@listingModel.Id)" class="btn btn-danger">Delete</button>
-                    </div>
-                    <div class="editListingBtn" class="listing">
-                        <button type="button" id="btnEditUser" value="Edit" onclick="EditListing(@listingModel.Id)">Edit</button>
-                        <button type="button" class="btn btn-success save-btn edit-mode" style="display: none;">Save</button>
-                        <button type="button" class="btn btn-secondary cancel-btn edit-mode" style="display: none;">Cancel</button>
-                    </div>
-                </div>
-            </div>
-        </div>}
-
 
 <script type="text/javascript">
-    //$("#preExistingDashboard").hide()
     $("#EditDashboardNow").hide()
-    $("#btnCreateUser").click(function () {
-        var ListingDTO_DBTable = {};                   
-        ListingDTO_DBTable.ListingName = $("#NameCreate").val();           
-        //objUser.Address = $("#AddressCreate").val();
-        //objUser.Phone_Number = $("#PhoneNumberCreate").val();
-        $.post("/Home/CreateUser", { ListingDTO_DBTable: ListingDTO_DBTable }, function (data)        
-        {
-            if (data != null) {
-                alert("User Created");
-                location.reload();       //for refreshing the page after saving   
-            }
-            else {
-                alert("Error");
-            }
-        });
-    })
-    function EditListing(Id) {
-        $.get("/Home/EditListingJ", { Id: Id }, function (data) {
-            if (data != null) {
-                $("#preExistingDashboard").hide();
-                $("#EditDashboardNow").show();
+    debugger;
+    $("#btnCreateListing").click(function (event) {
+        event.preventDefault(); // Prevent default form submission
+        
+        var formData = new FormData();
+        //formData.append("Id", $("#EditIdButHidden").val());
+        formData.append("ListingName", $("#ListingName").val());
 
-                // Populate the form with data from the server
-                $("#editPropertyName").val(data.ListingName);
-                $("#EditIdButHidden").val(data.Id);
-            }
-        });
-    }
-
-    $("#btnSaveEdit").click(function () {
-        var ListingDTO_DBTable = {};
-        ListingDTO_DBTable.Id = $("#EditIdButHidden").val();
-        ListingDTO_DBTable.ListingName = $("#editPropertyName").val();
-
-        // Post the data back to the controller
         $.ajax({
-            url: "/Home/EditListingJpost",
+            url: "/Home/CreateUser",
             type: "POST",
-            contentType: "application/json",  // Important: Set content type to JSON
-            data: JSON.stringify(ListingDTO_DBTable),  // Send the ListingDTO_DBTable object as JSON
-            success: function (data) {
-                if (data != null && data.success) {
-                    location.reload();  // Reload the page on success
-                    alert("User Edited");
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (response) {
+                if (response.success) {
+                    alert("Listing created successfully!");
+                    location.reload();
                 } else {
-                    alert("Error occurred while saving the changes.");
+                    
+                    alert("listing created anyway");
+                    location.reload();
+                    //alert("Error: listing not created" + response.message);
                 }
             },
             error: function () {
-                alert("An error occurred while trying to save.");
+                alert("An error occurred while creating.");
             }
         });
     });
-    
+    function EditListing(Id) {
+        
+        $.get("/Home/EditListingJ", { Id: Id }, function (data) {
+            console.log("Received Data:", data); // Debugging
+
+            if (data && data.Id) { // Ensure property names match
+                $("#preExistingDashboard").hide();
+                $("#EditDashboardNow").show();
+
+                $("#editPropertyName").val(data.ListingName);
+                $("#EditIdButHidden").val(data.Id);
+
+                console.log("Updated Fields:", $("#EditIdButHidden").val(), $("#editPropertyName").val());
+            } else {
+                console.error("Invalid Data Format:", data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            console.error("AJAX Request Failed:", textStatus, errorThrown);
+        });
+    }
+
+    $("#btnSaveEdit").click(function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        var formData = new FormData();
+        formData.append("Id", $("#EditIdButHidden").val());
+        formData.append("ListingName", $("#editPropertyName").val());
+
+        $.ajax({
+            url: "/Home/EditListingJpost",
+            type: "POST",
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (response) {
+                if (response.success) {
+                    alert("Listing updated successfully!");
+                    location.reload();
+                } else {
+                    alert("Error: " + response.message);
+                }
+            },
+            error: function () {
+                alert("An error occurred while saving.");
+            }
+        });
+    });
+
     $("#btnEditDetail").click(function(){
         var Id =document.getElementById("IdDetails").textContent;
         EditUser(Id);
     })
     function Delete(Id)
     {
-        $.post("/Home/DeleteUserJ", { Id:Id }, function (data) {      
+        $.post("/Home/DeleteUserJ", { Id:Id }, function (data) {
             if (data != null) {
                 location.reload();
                 alert("User Deleted");
@@ -187,8 +194,6 @@
             }
         });
     }
-
-
 </script>
 </body>
-</html>>
+</html>
