@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "PrNIi89VwwJUXIQZ8bj/posCFz1XvzKQVcN8Q2PdQoQ=",
+  "Hash": "JC5BTFIHbPQ5bJHvILHLj2YAMTs0HkC6mrPh7CvBZNs=",
   "Source": "SearchHome",
   "BasePath": "_content/SearchHome",
   "Mode": "Default",
@@ -1071,6 +1071,23 @@
       "OriginalItemSpec": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/obj/Debug/net7.0/scopedcss/projectbundle/SearchHome.bundle.scp.css"
     },
     {
+      "Identity": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/.DS_Store",
+      "SourceId": "SearchHome",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/",
+      "BasePath": "_content/SearchHome",
+      "RelativePath": ".DS_Store",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/.DS_Store"
+    },
+    {
       "Identity": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/css/dashboard.css",
       "SourceId": "SearchHome",
       "SourceType": "Discovered",
@@ -1171,6 +1188,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/imgSearchHome/IMG_20220102_161928.jpg"
+    },
+    {
+      "Identity": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/imgSearchHome/PXL_20250309_130130279.jpg",
+      "SourceId": "SearchHome",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/",
+      "BasePath": "_content/SearchHome",
+      "RelativePath": "imgSearchHome/PXL_20250309_130130279.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/imgSearchHome/PXL_20250309_130130279.jpg"
     },
     {
       "Identity": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/js/fetcher.js",

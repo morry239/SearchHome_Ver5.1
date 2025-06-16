@@ -1,0 +1,32 @@
+@model IEnumerable<WebApplication1.Models.ListingProjects_ver2>
+@{
+    ViewData["Title"] = "Dashboard";
+    
+    var listingMd = Model?.FirstOrDefault();
+}
+
+<div class="modal fade" id="uploadModal" taxindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ListingImageLabel">Image Upload</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <div class="col-lg-8 offset-2">
+                    <img class="img responsive img-thumbnail" id="popupimage" style="height:250px;width:250px" src=""/>
+                </div>
+                <div class="col-lg-8 offset-2">
+                    <input type="file" onchange="Functionuplod()" accept="images/*" id="imageupload" class="form-control"/>
+                </div>
+            </div>
+            <div class="modal-body">
+                
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
+                <input type="hidden" id="uploadListingPicHere"/>
+            </div>
+        </div>
+    </div>
+</div>

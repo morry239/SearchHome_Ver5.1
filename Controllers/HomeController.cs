@@ -1,29 +1,45 @@
 ﻿using System.Diagnostics;
-using System.Text.Json;
-using Microsoft.AspNetCore.Authorization;
+using System.Text;
+using System.Web;
+//using System.Web.Mvc;
+using System.Web.Mvc.Ajax;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication1.Models;
+using Controller = Microsoft.AspNetCore.Mvc.Controller;
+using FileStreamResult = Microsoft.AspNetCore.Mvc.FileStreamResult;
+using HtmlHelper = Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelper;
 using JsonException = Newtonsoft.Json.JsonException;
+using JsonResult = Microsoft.AspNetCore.Mvc.JsonResult;
 
 namespace WebApplication1.Controllers;
+
+//https://stackoverflow.com/questions/67321945/upload-image-and-show-that-in-asp-net-core-mvc
+//https://stackoverflow.com/questions/17952514/asp-net-mvc-how-to-display-a-byte-array-image-from-model
+//check this one OUT FIRST https://stackoverflow.com/questions/73877029/image-upload-function-in-crud
+//check out https://learn.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads?view=aspnetcore-9.0
+//https://wordpress.stackexchange.com/questions/367293/image-upload-via-formdata-api-and-ajax-is-not-working-files-always-emptyk
 
 public class HomeController : Controller
 {
     
     private readonly ApplicationDbContext _context;
     private ListingProjects_ver2 _listingProjectsDto;
+    private readonly IWebHostEnvironment _webHostEnvironment;
+    private readonly ILogger<HomeController> _logger;
     
     private readonly string rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot//searchHomeMisc");
 
-    public HomeController(ApplicationDbContext context)
+    public HomeController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment, ILogger<HomeController> logger)
     {
-        
+        _logger = logger;
         _context = context;
+        _webHostEnvironment = webHostEnvironment;
     }
 
-    [Authorize]
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public IActionResult Index()
     {
         var portalUserModelRef = _context.UsersDBTable
@@ -55,7 +71,7 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public async Task<JsonResult> EditListingJpost([FromForm] int Id, [FromForm] string ListingName, [FromForm] IFormFile ListingImage)
+    public async Task<JsonResult> EditListingJpost([FromForm] int Id, [FromForm] string ListingName)
     {
         Console.WriteLine($"Received Id: {Id}, ListingName: {ListingName}");
 
@@ -65,7 +81,7 @@ public class HomeController : Controller
         {
             return Json(new { success = false, message = "Listing not found." });
         }
-
+      
         if (await TryUpdateModelAsync<ListingProjects_ver2>(listingToUpdate, "", s => s.ListingName))
         {
             try
@@ -79,50 +95,89 @@ public class HomeController : Controller
                 return Json(new { success = false, message = "Unable to save changes." });
             }
         }
+        
+        var validationErrors = ModelState.Values.Where(E => E.Errors.Count > 0)
+            .SelectMany(E => E.Errors)
+            .Select(E => E.ErrorMessage)
+            .ToList();
 
+        foreach (var validationErrStr in validationErrors)
+        {
+            Console.WriteLine($"what is the error about {validationErrStr}");
+        }
         return Json(listingToUpdate);
     }
+    
+    /*
+     * you have a static string in your html that displays the image,
+     * if you want it dynamic you have to upload it store the web path in your table
+     * so you can perform the other ops if so desired 
+     */
 
     [HttpPost]
-    public async Task <JsonResult> CreateUser([Bind("ListingName")]ListingProjects_ver2 obModel, IFormFile file) 
+    public async Task <JsonResult> CreateUser([Bind("ListingName","Id","ListingImgName")]ListingProjects_ver2 obModel) 
     {
         try
         {
-            if (obModel.Id == null)
+            //TODO: Mami muss die bedingung nochmal anpassen!!!!!
+            if (true)
             {
+                
                 if (obModel.ListingName == null)
                 {
-                    Console.WriteLine("nullcheck");
-                    return Json(obModel,  new JsonException());
+                    return new JsonResult(Problem());
                 }
+
+                obModel.Id = null;
                 
-                //assign each listing a photo
-                if (file != null)
-                {
-                    var path =  Path.Combine(rootPath, Guid.NewGuid() + Path.GetExtension(file.FileName));
-                    using (var fs = new FileStream(path, FileMode.Create))
-                    {
-                        await file.CopyToAsync(fs);
-                    }
-                }
                 _context.ListingVer2_DBTable.Add(obModel);
-                Console.WriteLine($"if name is null {obModel.ListingName}");
+                byte[] bytesListingImageName = Encoding.ASCII.GetBytes(obModel.ListingImgName);
+                Upload(bytesListingImageName);
+                //OnPostUploadAsync(files);
+                _logger.LogError("log the errors");
+                
                 _context.SaveChanges();
                 
+                
+                //return Json(obModel, fileName); 
                 return Json(obModel);
             }
             else
             {
                 _context.ListingVer2_DBTable.Update(_listingProjectsDto);
             }
+            
             return Json(obModel);
             
         }catch (Exception ex)
         {
-            return null;
+            Console.WriteLine($"you got an exception {ex}");
+            return Json(obModel);
         }
     }
-    
+    [HttpPost("Upload/{id}"), DisableRequestSizeLimit]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Upload(byte[] imageName)
+    {
+        try
+        {
+            //TODO: ImageName in die Datenbank abspeichern
+            Console.WriteLine($"ImageName ist {imageName}");
+            string imageBase64Data = Convert.ToBase64String(imageName);
+            string imageData = string.Format("data:image/jpg;base64, {0}", imageBase64Data);
+
+            _listingProjectsDto.ListingImgName = imageData;
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            return StatusCode(500);
+        }
+    }
+
     public IActionResult Privacy()
     {
         return View();
@@ -149,20 +204,26 @@ public class HomeController : Controller
             return null;
         }
     }
+ 
 
-    [AllowAnonymous]
+    [Microsoft.AspNetCore.Authorization.AllowAnonymous]
     public async Task<IActionResult> TestDashboard1()
     {
-        var datasource = _context.ListingVer2_DBTable.AsQueryable();
-        var query = datasource
-            .Select(x => new ListingProjects_ver2()
-            {
-                Id = x.Id,
-                ListingName = x.ListingName,
-            });
+            
+            var datasource = _context.ListingVer2_DBTable.AsQueryable();
+            var query = datasource
+                .Select(x => new ListingProjects_ver2()
+                {
+                    Id = x.Id,
+                    ListingName = x.ListingName,
+                    ListingImgName = x.ListingImgName
+                   
+                });
 
-        var listings = await query.ToListAsync();
-        return View(listings);
+            var listings = await query.ToListAsync();
+            return View(listings);
+        
+        
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

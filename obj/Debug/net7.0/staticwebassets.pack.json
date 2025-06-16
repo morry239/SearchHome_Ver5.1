@@ -5,6 +5,10 @@
       "PackagePath": "staticwebassets/SearchHome.bundle.scp.css"
     },
     {
+      "Id": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/.DS_Store",
+      "PackagePath": "staticwebassets/.DS_Store"
+    },
+    {
       "Id": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/css/dashboard.css",
       "PackagePath": "staticwebassets/css/dashboard.css"
     },
@@ -27,6 +31,10 @@
     {
       "Id": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/imgSearchHome/IMG_20220102_161928.jpg",
       "PackagePath": "staticwebassets/imgSearchHome/IMG_20220102_161928.jpg"
+    },
+    {
+      "Id": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/imgSearchHome/PXL_20250309_130130279.jpg",
+      "PackagePath": "staticwebassets/imgSearchHome/PXL_20250309_130130279.jpg"
     },
     {
       "Id": "/Users/mamikawamura/RiderProjects/WebApplication1/SearchHome/wwwroot/js/fetcher.js",

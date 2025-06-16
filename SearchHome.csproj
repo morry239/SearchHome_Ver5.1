@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>aspnet-WebApplication1-877638D4-6190-4693-A1EF-7FDCD3CB408F</UserSecretsId>
         <RootNamespace>WebApplication1</RootNamespace>
@@ -21,6 +21,9 @@
     
     <ItemGroup>
         <PackageReference Include="EntityFramework" Version="6.5.1" />
+        <PackageReference Include="HttpMultipartParser" Version="9.0.0" />
+        <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.3.0" />
+        <PackageReference Include="Microsoft.AspNet.WebHelpers" Version="3.3.0" />
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.1" />

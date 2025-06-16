@@ -1,7 +1,9 @@
-@model IEnumerable<ListingProjects_ver2>
+@using System.Text
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<WebApplication1.Models.ListingProjects_ver2>
 @{
     ViewData["Title"] = "Dashboard";
-
+    
     var listingMd = Model?.FirstOrDefault();
 }
 
@@ -15,22 +17,29 @@
 </head>
 <body>
 
-<div id="CreateUser" class="form-horizontal" method="post" asp-action="CreateUser" asp-controller="Home">
+<div id="CreateUser" class="form-horizontal" method="post" asp-action="CreateUser" asp-controller="Home" action="BufferedSingleFileUploadPhysical/?handler=Upload"
+     enctype="multipart/form-data" > 
+    
     <h4>Properties</h4>
+    
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     @Html.ValidationMessage("validation")
+    
     <div class="form-group">
         <label class="control-label col-md-2">Name</label>
         <div class="col-md-10">
-            <input class="form-control" type="text" name="ListingName" id="ListingName" />
-            <input class="form-control" type="text" name="ListingImage" id="ListingImage" />
+            <!-- src="../imgSearchHome/PXL_20250309_130130279.jpg" -->
+            <input class="form-control" type="text" name="ListingName" id="ListingName"/>
+            <form><img style="display:block; width:100px;height:100px;" src="../imgSearchHome/PXL_20250309_130130279.jpg" id="listingImageImg" type="file"></img><input type="file" class="form-control" id="imageListingY" onchange='previewFile(this.files[0]),  imageUploaded(this)' accept="image/*" name="imageListingY"/>
+            </form>
         </div>
     </div>
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
             <input type="submit" id="btnCreateListing" value="click me to create" class="btn btn-default" />
         </div>
+       
     </div>
 </div>
 
@@ -39,16 +48,17 @@
         <form method="post" asp-controller="Home" asp-action="EditListingJpost" enctype="multipart/form-data">
             <div class="listing form-horizontal">
                 <div class="content">
-                    <div><img class="listingPhoto" src="~/imgSearchHome/IMG_20220102_161928.jpg" /></div>
+                   
                     <div class="content">
                         <!-- Hidden input for Id -->
                         <input type="hidden" value="@listingMd.Id" id="EditIdButHidden" name="Id" />
-                        <p>
+                        <div>
                             Property Name:
                             <div class="form-group">
                                 <input class="form-control" id="editPropertyName" name="ListingName"/>
+                                
                             </div>
-                        </p>
+                        </div>
                         <picture>I am the EditDashboard now</picture>
                         <p>Age: </p>
                         <div class="roundPlaceholder">
@@ -69,12 +79,17 @@
     </div>
 
 <div class="wrapper" id="preExistingDashboard">
-@foreach (var listingModel in Model)
-{
-   
+    @foreach (var listingModel in Model)
+    {
+
         <div class="listing">
-            <div><img class="listingPhoto" src="~/imgSearchHome/IMG_20220102_161928.jpg" /></div>
+
+
             <div class="content">
+                <div>
+                    <img src=@listingModel.ListingImgName style="display:block; width:100px;height:100px;" id="listingImageImgUploaded">
+                   
+                </div>
                 <p>
                     Property Name: <span class="view-mode listing-name">@listingModel.ListingName</span>
 
@@ -94,19 +109,68 @@
                 </div>
             </div>
         </div>
-   
-}
-</div>
 
+    }
+</div> 
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 <script type="text/javascript">
-    $("#EditDashboardNow").hide()
-    debugger;
+    function previewFile(file) {
+        const preview = document.getElementById("listingImageImg");
+        const reader = new FileReader();
+
+        reader.addEventListener(
+            "load",
+            () => {
+                // convert image file to base64 string
+                preview.src = reader.result;
+            },
+            false,
+        );
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+
+    let base64String = "";
+
+    function imageUploaded(element) {
+        let file = document.querySelector(
+            'input[type=file]')['files'][0];
+
+        let reader = new FileReader();
+        console.log("next");
+
+        reader.onload = function () {
+            base64String = reader.result.replace("data:", "")
+                .replace(/^.+,/, "");
+
+            imageBase64Stringsep = base64String;
+
+            // alert(imageBase64Stringsep);
+            console.log(base64String);
+            
+            document.getElementById("listingImageImg").setAttribute("src", base64String);
+        }
+        //return reader.readAsDataURL(file);
+    }
+
+    function displayString() {
+        console.log("Base64String about to be printed");
+        alert(base64String);
+    }
+   /**/
+    $("#EditDashboardNow").hide();
+    
     $("#btnCreateListing").click(function (event) {
         event.preventDefault(); // Prevent default form submission
-        
+        //var file = document.getElementById("listingImageImg").getAttribute("src");
+        var fileInput = document.getElementById("imageListingY");
+        var appendImgFiles = fileInput.files[0];
         var formData = new FormData();
-        //formData.append("Id", $("#EditIdButHidden").val());
+        formData.append("Id", $("#EditIdButHidden").val());
         formData.append("ListingName", $("#ListingName").val());
+        formData.append('file', appendImgFiles);
 
         $.ajax({
             url: "/Home/CreateUser",
@@ -119,19 +183,19 @@
                     alert("Listing created successfully!");
                     location.reload();
                 } else {
-                    
                     alert("listing created anyway");
                     location.reload();
-                    //alert("Error: listing not created" + response.message);
                 }
             },
             error: function () {
                 alert("An error occurred while creating.");
             }
+            
         });
-    });
-    function EditListing(Id) {
         
+            
+    });
+            function EditListing(Id) {
         $.get("/Home/EditListingJ", { Id: Id }, function (data) {
             console.log("Received Data:", data); // Debugging
 
@@ -141,8 +205,9 @@
 
                 $("#editPropertyName").val(data.ListingName);
                 $("#EditIdButHidden").val(data.Id);
+                $("#ListingImage").val(data.ListingImage);
 
-                console.log("Updated Fields:", $("#EditIdButHidden").val(), $("#editPropertyName").val());
+                console.log("Updated Fields:", $("#EditIdButHidden").val(), $("#editPropertyName").val(), $("#ListingImage").val());
             } else {
                 console.error("Invalid Data Format:", data);
             }
@@ -157,6 +222,7 @@
         var formData = new FormData();
         formData.append("Id", $("#EditIdButHidden").val());
         formData.append("ListingName", $("#editPropertyName").val());
+        formData.append("ListingImage", $("#ListingImage").val());
 
         $.ajax({
             url: "/Home/EditListingJpost",
@@ -178,22 +244,21 @@
         });
     });
 
-    $("#btnEditDetail").click(function(){
-        var Id =document.getElementById("IdDetails").textContent;
-        EditUser(Id);
-    })
-    function Delete(Id)
-    {
-        $.post("/Home/DeleteUserJ", { Id:Id }, function (data) {
+    $("#btnEditDetail").click(function () {
+        var Id = document.getElementById("IdDetails").textContent;
+        EditListing(Id);
+    });
+
+    function Delete(Id) {
+        $.post("/Home/DeleteUserJ", { Id: Id }, function (data) {
             if (data != null) {
-                location.reload();
                 alert("User Deleted");
-            }
-            else {
+                location.reload();
+            } else {
                 alert("Error");
             }
         });
-    }
+    } // Fixed syntax here
 </script>
 </body>
 </html>
