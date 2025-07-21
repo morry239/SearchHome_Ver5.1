@@ -11,32 +11,29 @@ using WebApplication1.Models;
 using Controller = Microsoft.AspNetCore.Mvc.Controller;
 using FileStreamResult = Microsoft.AspNetCore.Mvc.FileStreamResult;
 using HtmlHelper = Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelper;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using JsonException = Newtonsoft.Json.JsonException;
 using JsonResult = Microsoft.AspNetCore.Mvc.JsonResult;
 
 namespace WebApplication1.Controllers;
-
-//https://stackoverflow.com/questions/67321945/upload-image-and-show-that-in-asp-net-core-mvc
-//https://stackoverflow.com/questions/17952514/asp-net-mvc-how-to-display-a-byte-array-image-from-model
-//check this one OUT FIRST https://stackoverflow.com/questions/73877029/image-upload-function-in-crud
-//check out https://learn.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads?view=aspnetcore-9.0
-//https://wordpress.stackexchange.com/questions/367293/image-upload-via-formdata-api-and-ajax-is-not-working-files-always-emptyk
 
 public class HomeController : Controller
 {
     
     private readonly ApplicationDbContext _context;
     private ListingProjects_ver2 _listingProjectsDto;
-    private readonly IWebHostEnvironment _webHostEnvironment;
+    private IHostingEnvironment _env;
     private readonly ILogger<HomeController> _logger;
+    public List<ListingProjects_ver2> ListingList {get;set;}
     
     private readonly string rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot//searchHomeMisc");
 
-    public HomeController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment, ILogger<HomeController> logger)
+    public HomeController(ApplicationDbContext context, ILogger<HomeController> logger, IHostingEnvironment env)
     {
         _logger = logger;
         _context = context;
-        _webHostEnvironment = webHostEnvironment;
+        this._env = env;
+
     }
 
     [Microsoft.AspNetCore.Authorization.Authorize]
@@ -115,11 +112,11 @@ public class HomeController : Controller
      */
 
     [HttpPost]
-    public async Task <JsonResult> CreateUser([Bind("ListingName","Id","ListingImgName")]ListingProjects_ver2 obModel) 
+    public async Task <JsonResult> CreateUser([Bind("ListingName","Id","ListingReview","ListingImgNameRichtig")]ListingProjects_ver2 obModel) 
     {
         try
         {
-            //TODO: Mami muss die bedingung nochmal anpassen!!!!!
+            
             if (true)
             {
                 
@@ -128,18 +125,18 @@ public class HomeController : Controller
                     return new JsonResult(Problem());
                 }
 
-                obModel.Id = null;
-                
+                //obModel.Id = null;
+                //byte[] bytesListingImageName = obModel.ListingImgName;
+                //Upload(bytesListingImageName);
+                OnPostAsyncImg(obModel);
+                GetImages();
                 _context.ListingVer2_DBTable.Add(obModel);
-                byte[] bytesListingImageName = Encoding.ASCII.GetBytes(obModel.ListingImgName);
-                Upload(bytesListingImageName);
+                
                 //OnPostUploadAsync(files);
                 _logger.LogError("log the errors");
                 
                 _context.SaveChanges();
                 
-                
-                //return Json(obModel, fileName); 
                 return Json(obModel);
             }
             else
@@ -155,6 +152,46 @@ public class HomeController : Controller
             return Json(obModel);
         }
     }
+    
+    public async Task<IActionResult> OnPostAsyncImg(ListingProjects_ver2 model)
+    {
+        if (model.ListingImgNameRichtig != null && model.ListingImgNameRichtig.Length > 0)
+        {
+            //var fileName = Path.GetFileName(model.ListingImgNameRichtig.FileName);
+            var fileName = Path.GetFileName(model.Id.ToString()+".jpg");
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/imgSearchHome", fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                
+                await model.ListingImgNameRichtig.CopyToAsync(stream);
+            }
+        }
+        return RedirectToPage("TestDashboard1");
+    }
+    
+    [HttpGet]
+    public IActionResult GetImages()
+    {
+        // get the real path of wwwroot/imagesFolder
+        var rootDir = this._env.WebRootPath;
+        // the extensions allowed to show
+        var filters = new String[] { ".jpg", ".jpeg", ".png", ".gif", ".tiff", ".bmp", ".svg" };
+        // set the base url = "/"
+        var baseUrl = "/";
+        
+        var dirInfo = new DirectoryInfo(rootDir);
+        var imgUrls = dirInfo.GetFiles("*.*",SearchOption.AllDirectories).OrderByDescending(imgUrls => imgUrls.CreationTime)
+                .Where(dirInfo => filters.Any(filter => dirInfo.Name.EndsWith(filter)))
+                .Select( dirInfo => Path.GetRelativePath( rootDir, dirInfo.ToString()) ) // get relative path
+                .Select ( dirInfo=> Path.Combine(baseUrl, dirInfo.ToString()))          // prepend the baseUrl
+                .Select( dirInfo => dirInfo.Replace("\\","/"))       
+                .ToList()// replace "\" with "/"
+            ;
+        return new JsonResult(imgUrls);
+        
+    }
+    
+    
     [HttpPost("Upload/{id}"), DisableRequestSizeLimit]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -168,7 +205,7 @@ public class HomeController : Controller
             string imageBase64Data = Convert.ToBase64String(imageName);
             string imageData = string.Format("data:image/jpg;base64, {0}", imageBase64Data);
 
-            _listingProjectsDto.ListingImgName = imageData;
+            //_listingProjectsDto.ListingImgName = imageData;
             return Ok();
         }
         catch (Exception ex)
@@ -211,12 +248,14 @@ public class HomeController : Controller
     {
             
             var datasource = _context.ListingVer2_DBTable.AsQueryable();
+            var imgResult = _context.ListingVer2_DBTable.ToList();
             var query = datasource
                 .Select(x => new ListingProjects_ver2()
                 {
                     Id = x.Id,
                     ListingName = x.ListingName,
-                    ListingImgName = x.ListingImgName
+                    ListingImgNameRichtig = x.ListingImgNameRichtig,
+                    ListingReview = x.ListingReview,
                    
                 });
 

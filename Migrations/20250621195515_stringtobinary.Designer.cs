@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication1.Data;
 
@@ -10,9 +11,11 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250621195515_stringtobinary")]
+    partial class stringtobinary
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -213,7 +216,7 @@ namespace WebApplication1.Migrations
             modelBuilder.Entity("WebApplication1.Models.ListingProjects_ver2", b =>
                 {
                     b.Property<int?>("Id")
-                        .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     b.Property<byte[]>("ListingImgName")
@@ -225,6 +228,8 @@ namespace WebApplication1.Migrations
 
                     b.Property<string>("ListingReview")
                         .HasColumnType("longtext");
+
+                    b.HasKey("Id");
 
                     b.ToTable("ListingVer2_DBTable");
                 });

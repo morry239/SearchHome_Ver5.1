@@ -1,5 +1,6 @@
 @using System.Text
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@using WebApplication1.Models
 @model IEnumerable<WebApplication1.Models.ListingProjects_ver2>
 @{
     ViewData["Title"] = "Dashboard";
@@ -31,7 +32,10 @@
         <div class="col-md-10">
             <!-- src="../imgSearchHome/PXL_20250309_130130279.jpg" -->
             <input class="form-control" type="text" name="ListingName" id="ListingName"/>
-            <form><img style="display:block; width:100px;height:100px;" src="../imgSearchHome/PXL_20250309_130130279.jpg" id="listingImageImg" type="file"></img><input type="file" class="form-control" id="imageListingY" onchange='previewFile(this.files[0]),  imageUploaded(this)' accept="image/*" name="imageListingY"/>
+            <form method="post" enctype="multipart/form-data">
+                <img style="display:block; width:100px;height:100px;" src="../imgSearchHome/PXL_20250309_130130279.jpg" id="listingImageImg" type="file"></img>
+                <input type="file" class="form-control" id="ListingImgNameRichtig" onchange='previewFile(this.files[0]),  imageUploaded(this)' accept="image/*" name="ListingImgNameRichtig"/>
+                <input class="form-control" type="text" name="ListingReview" id="ListingReview"/>
             </form>
         </div>
     </div>
@@ -86,14 +90,17 @@
 
 
             <div class="content">
+               
                 <div>
-                    <img src=@listingModel.ListingImgName style="display:block; width:100px;height:100px;" id="listingImageImgUploaded">
+                    
                    
+                    <img name="ListingImgNameRichtig" id="ListingImgNameRichtig" style="display: block; width: 100px; height: 100px;" src="~/imgSearchHome/@listingModel.ListingImgNameRichtig"></img>
                 </div>
                 <p>
                     Property Name: <span class="view-mode listing-name">@listingModel.ListingName</span>
-
+                    Property Review: <span>@listingModel.ListingReview</span>
                 </p>
+
                 <p>I am the pre-existing dashboard</p>
                 <p>Age: @listingModel.Id</p>
                 <div class="roundPlaceholder">
@@ -111,6 +118,22 @@
         </div>
 
     }
+    <form enctype="multipart/form-data">
+        <input type="file" id="file"/>
+        <input type="button" id="btnUpload" value="Upload"/>
+    </form>
+    <progress id="fileProgress" style="display:none"></progress>
+    <hr/>
+    <table id="tblImages" cellpadding="0" cellspacing="0">
+        <tr>
+            <th style="width:120px">Image Name</th>
+            <th style="width:80px">Image</th>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
 </div> 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 <script type="text/javascript">
@@ -152,25 +175,124 @@
             
             document.getElementById("listingImageImg").setAttribute("src", base64String);
         }
-        //return reader.readAsDataURL(file);
+        
     }
 
     function displayString() {
         console.log("Base64String about to be printed");
         alert(base64String);
     }
+
+    var xhr = new XMLHttpRequest();
+    xhr.onload=function(e){
+        var urls=JSON.parse(e.target.responseText);
+        var allImageNodes = document.querySelectorAll("#ListingImgNameRichtig");
+        var TempArr = [];
+        for (var x = allImageNodes.length; x--;) {
+            TempArr.push(allImageNodes[x]);
+        }
+        allImageNodes = TempArr;
+        allImageNodes.forEach((image, index) => {
+            image.src = urls[index];
+        })
+        
+        /*
+        
+        for(var i = 0 ;i<urls.length;i++){
+            var img = document.createElement("img");
+            img.style = "height: 50px; width: 50px;";
+            img.src = urls[i];
+            document.body.appendChild(img);
+        }*/
+    };
+    xhr.open("get","/Home/GetImages");
+    xhr.send();
+
+    /*$(function(){
+        GetFiles();
+    });
+    function GetFiles() {
+        $.ajax({
+            type: "POST",
+            url: "/Home/GetImages",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (files) {
+                $.each(files, function () {
+                    AppendRow(this);
+                });
+            },
+            failure: function (r) {
+                alert(r.d);
+            },
+            error: function (r) {
+                alert(r.d);
+            }
+        });
+    };
+
+    function AppendRow(name) {
+        var row = $("#tblImages tbody tr:last-child");
+
+        //Remove if the row is dummy row.
+        if (row.find("td:empty").length > 0) {
+            row.remove();
+        }
+
+        row = row.clone();
+        $("td", row).eq(0).text(name);
+        $("td", row).eq(1).html("");
+        var img = $("<img />");
+        img.attr("src", '@Url.Content("~/imgSearchHome/")' + name);
+        img.attr("style", "height:80px;width:80px");
+        $("td", row).eq(1).append(img);
+        $("#tblImages tbody").append(row);
+    };
+    $("body").on("click", "#btnUpload", function () {
+        var formData = new FormData();
+        formData.append("file", $("#file")[0].files[0]);
+        $.ajax({
+            url: '/Home/OnPostAsyncImg',
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (fileName) {
+                $("#fileProgress").hide();
+                AppendRow(fileName);
+            },
+            xhr: function () {
+                var fileXhr = $.ajaxSettings.xhr();
+                if (fileXhr.upload) {
+                    $("progress").show();
+                    fileXhr.upload.addEventListener("progress", function (e) {
+                        if (e.lengthComputable) {
+                            $("#fileProgress").attr({
+                                value: e.loaded,
+                                max: e.total
+                            });
+                        }
+                    }, false);
+                }
+                return fileXhr;
+            }
+        });
+    });
    /**/
     $("#EditDashboardNow").hide();
     
     $("#btnCreateListing").click(function (event) {
         event.preventDefault(); // Prevent default form submission
         //var file = document.getElementById("listingImageImg").getAttribute("src");
-        var fileInput = document.getElementById("imageListingY");
+        var fileInput = document.getElementById("ListingImgNameRichtig");
         var appendImgFiles = fileInput.files[0];
         var formData = new FormData();
         formData.append("Id", $("#EditIdButHidden").val());
         formData.append("ListingName", $("#ListingName").val());
-        formData.append('file', appendImgFiles);
+        formData.append('ListingImgNameRichtig', appendImgFiles);
+        formData.append("ListingReview", $("#ListingReview").val());
 
         $.ajax({
             url: "/Home/CreateUser",
